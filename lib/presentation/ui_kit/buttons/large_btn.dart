@@ -26,7 +26,7 @@ class LargeBtn extends StatelessWidget {
               10,
             ),
             color: UIKitColors.secondaryColor,
-            border: Border.all(color: UIKitColors.white, width: 0.5)),
+            border: Border.all(color: UIKitColors.white, width: 1)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -59,6 +59,15 @@ class RoutineTile extends StatelessWidget {
                 "${exercises.length} exercises",
                 style: TextStyle(color: UIKitColors.white, fontSize: 14),
               ),
+              Spacer(),
+              Text(
+                "View more",
+                style: TextStyle(
+                  color: UIKitColors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           )
         ],
