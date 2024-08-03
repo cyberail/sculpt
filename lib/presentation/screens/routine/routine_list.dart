@@ -13,17 +13,18 @@ class RoutineListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: UIKitColors.primaryColor,
       appBar: defaultAppBar(context, "Routines list"),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RoutineTile(
-              name: 'Monday',
-              timeMinutes: 57,
-              exercises: [WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut()],
-            ),
-          ],
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            children: [
+              RoutineTile(
+                name: 'Monday',
+                timeMinutes: 57,
+                exercises: [WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut()],
+              ),
+            ],
+          ),
         ),
       ),
     );

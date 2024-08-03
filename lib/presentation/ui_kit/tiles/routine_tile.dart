@@ -18,6 +18,7 @@ class RoutineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: UIKitColors.secondaryColor,
         border: Border.all(
           width: 2,
         ),
