@@ -1,0 +1,4 @@
+enum WorkoutType {
+  manual,
+  time,
+}
