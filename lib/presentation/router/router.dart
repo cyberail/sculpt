@@ -22,8 +22,10 @@ final router = GoRouter(
       builder: (context, state) => RoutineListScreen(),
     ),
     GoRoute(
-      path: '/routine:/routine_id',
-      builder: (context, state) => RoutineDetailScreen(),
+      path: '/routine/:routine_id',
+      builder: (context, state) {
+        return RoutineDetailScreen(routineId: state.pathParameters["routine_id"]);
+      },
     ),
     GoRoute(
       path: '/workouts',

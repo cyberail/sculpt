@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sculpt/models/workout.dart';
+import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/routine_tile.dart';
@@ -18,11 +17,7 @@ class RoutineListScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             children: [
-              RoutineTile(
-                name: 'Monday',
-                timeMinutes: 57,
-                exercises: [WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut(), WorkOut()],
-              ),
+              RoutineTile(routine: Routine()),
             ],
           ),
         ),

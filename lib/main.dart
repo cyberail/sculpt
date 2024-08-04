@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sculpt/bloc/routine/routine_cubit.dart';
+import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/injections.dart';
+import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 import 'package:sculpt/presentation/router/router.dart';
-import 'package:sculpt/presentation/screens/dashboard.dart';
-import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 import 'package:sculpt/presentation/ui_kit/progress_indicator.dart';
 
 void main() {
@@ -20,8 +22,15 @@ class MainApp extends StatelessWidget {
           if (!snapshot.hasData) {
             return const Progress();
           }
-          return MaterialApp.router(
-            routerConfig: router,
+
+          final routineCubit = RoutineCubit(
+            RoutineDatasource(db: sl.get<IsarDatabase>()),
+          );
+          return BlocProvider(
+            create: (context) => routineCubit,
+            child: MaterialApp.router(
+              routerConfig: router,
+            ),
           );
         });
   }

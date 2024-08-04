@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:sculpt/models/workout.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class RoutineTile extends StatelessWidget {
-  final String name;
-  final double timeMinutes;
+  final Routine routine;
 
-  final List<WorkOut> exercises;
   const RoutineTile({
     super.key,
-    required this.name,
-    required this.timeMinutes,
-    required this.exercises,
+    required this.routine,
   });
 
   //test comment
@@ -30,7 +27,7 @@ class RoutineTile extends StatelessWidget {
           Row(
             children: [
               Text(
-                name,
+                routine.name,
                 style: TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
               Spacer(),
@@ -41,7 +38,7 @@ class RoutineTile extends StatelessWidget {
               ),
               SizedBox(width: 4),
               Text(
-                "${timeMinutes}m",
+                "${routine.getDurationSum()}m",
                 style: TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
             ],
@@ -56,18 +53,21 @@ class RoutineTile extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                "${exercises.length} exercises",
+                "${routine.exercises.length} exercises",
                 style: TextStyle(color: UIKitColors.white, fontSize: 14),
               ),
               Spacer(),
-              Text(
-                "View more",
-                style: TextStyle(
-                  color: UIKitColors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+              InkWell(
+                onTap: () => context.push("/routine/:${routine.id}"),
+                child: Text(
+                  "View more",
+                  style: TextStyle(
+                    color: UIKitColors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
+              )
             ],
           )
         ],

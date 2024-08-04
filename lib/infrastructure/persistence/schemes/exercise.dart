@@ -1,14 +1,11 @@
 import 'package:isar/isar.dart';
 import 'package:sculpt/constants/enums.dart';
 
-part 'workout.g.dart';
+part 'exercise.g.dart';
 
-@collection
-@Name("Workout")
-class WorkOut {
-  @Name('id')
-  Id id = Isar.autoIncrement;
-
+@embedded
+@Name("Exercise")
+class Exercise {
   @Name('name')
   late String name;
 
@@ -17,5 +14,5 @@ class WorkOut {
   WorkoutType type = WorkoutType.time;
 
   @Name('time')
-  int? time = -1;
+  int time = -1;
 }

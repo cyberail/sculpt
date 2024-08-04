@@ -1,6 +1,21 @@
 part of 'routine_cubit.dart';
 
-@immutable
-sealed class RoutineState {}
+final class RoutineState {
+  final StateStatus status;
+  final Routine? routine;
 
-final class RoutineInitial extends RoutineState {}
+  RoutineState({
+    required this.status,
+    this.routine,
+  });
+
+  RoutineState copyWith({
+    StateStatus? status,
+    Routine? routine,
+  }) {
+    return RoutineState(
+      status: status ?? this.status,
+      routine: routine ?? this.routine,
+    );
+  }
+}

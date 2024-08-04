@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class DefaultTextField extends StatelessWidget {
+  final TextEditingController controller;
   final String? Function(String?) validator;
   final String label;
   final String hintText;
@@ -12,11 +13,13 @@ class DefaultTextField extends StatelessWidget {
     required this.validator,
     required this.label,
     required this.hintText,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
       style: TextStyle(color: UIKitColors.white),
       decoration: InputDecoration(
