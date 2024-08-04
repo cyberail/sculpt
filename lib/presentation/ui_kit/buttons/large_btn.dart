@@ -32,7 +32,7 @@ class LargeBtn extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: TextStyle(color: fgColor),
+                style: TextStyle(color: fgColor, fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
