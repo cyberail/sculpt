@@ -25,9 +25,5 @@ final router = GoRouter(
       path: '/workouts',
       builder: (context, state) => WorkoutListScreen(),
     ),
-    GoRoute(
-      path: '/workout/:workout_id',
-      builder: (context, state) => WorkoutDetailScreen(),
-    ),
   ],
 );
