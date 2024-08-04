@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class DefaultTextField extends StatelessWidget {
@@ -21,13 +20,13 @@ class DefaultTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
-      style: TextStyle(color: UIKitColors.white),
+      style: const TextStyle(color: UIKitColors.white),
       decoration: InputDecoration(
         labelText: label,
-        hintStyle: TextStyle(color: UIKitColors.grey),
+        hintStyle: const TextStyle(color: UIKitColors.grey),
         hintText: hintText,
-        labelStyle: TextStyle(color: UIKitColors.white, fontSize: 15),
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: UIKitColors.white, width: 2)),
+        labelStyle: const TextStyle(color: UIKitColors.white, fontSize: 15),
+        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: UIKitColors.white, width: 2)),
       ),
       validator: validator,
     );

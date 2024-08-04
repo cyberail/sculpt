@@ -14,7 +14,7 @@ class ExerciseDetailScreen extends StatelessWidget {
       appBar: defaultAppBar(context, "Workout detail"),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [],
         ),

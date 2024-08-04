@@ -27,7 +27,7 @@ class RoutineDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: UIKitColors.primaryColor,
-      appBar: defaultAppBar(context, "Routine: ${routine?.name} "),
+      appBar: defaultAppBar(context, "Routine: ${routine.name} "),
       floatingActionButton: FloatingAdditionButton(onTap: () {}),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -46,7 +46,7 @@ class RoutineDetailScreen extends StatelessWidget {
     return ListView(children: [
       ...routine.exercises.map((exercise) {
         return Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 10,
             ),
             child: ExerciseTile(exercise: exercise));

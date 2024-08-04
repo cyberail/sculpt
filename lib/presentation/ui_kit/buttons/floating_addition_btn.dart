@@ -13,7 +13,7 @@ class FloatingAdditionButton extends StatelessWidget {
     return FloatingActionButton(
       onPressed: onTap,
       backgroundColor: UIKitColors.secondaryFgColor,
-      child: Icon(
+      child: const Icon(
         Icons.add,
         color: UIKitColors.white,
       ),

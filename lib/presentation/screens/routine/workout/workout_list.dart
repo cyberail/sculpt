@@ -12,7 +12,7 @@ class WorkoutListScreen extends StatelessWidget {
       appBar: defaultAppBar(context, "Workout list"),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [],
         ),

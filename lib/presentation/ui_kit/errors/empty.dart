@@ -18,12 +18,12 @@ class EmptyListMessage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(color: UIKitColors.white, fontSize: 20),
+            style: const TextStyle(color: UIKitColors.white, fontSize: 20),
           ),
           if (subtitle != null)
             Text(
               subtitle!,
-              style: TextStyle(color: UIKitColors.secondaryFgColor, fontSize: 16),
+              style: const TextStyle(color: UIKitColors.secondaryFgColor, fontSize: 16),
             ),
         ],
       ),

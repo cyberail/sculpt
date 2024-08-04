@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/screens/routine/routine_detail.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
@@ -16,7 +15,7 @@ class RoutineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: UIKitColors.secondaryColor,
         border: Border.all(width: 1, color: UIKitColors.white),
@@ -29,25 +28,25 @@ class RoutineTile extends StatelessWidget {
             children: [
               Text(
                 routine.name,
-                style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
-              Spacer(),
-              Icon(
+              const Spacer(),
+              const Icon(
                 Icons.timelapse_rounded,
                 color: UIKitColors.white,
                 size: 25,
               ),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Text(
                 "${routine.getDurationSum()}m",
-                style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
             ],
           ),
           const SizedBox(height: 25),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.fitness_center,
                 color: UIKitColors.white,
                 size: 20,
@@ -55,21 +54,30 @@ class RoutineTile extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 "${routine.exercises.length} exercises",
-                style: TextStyle(color: UIKitColors.white, fontSize: 14),
+                style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
-              Spacer(),
-              InkWell(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return RoutineDetailScreen(
-                    routine: routine,
-                  );
-                })),
-                child: Text(
-                  "View more",
-                  style: TextStyle(
-                    color: UIKitColors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+              const Spacer(),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  splashFactory: InkSplash.splashFactory,
+                  radius: 100,
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return RoutineDetailScreen(
+                      routine: routine,
+                    );
+                  })),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                    child: Text(
+                      "View more",
+                      style: TextStyle(
+                        color: UIKitColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               )

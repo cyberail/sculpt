@@ -14,6 +14,11 @@ class RoutineCubit extends Cubit<RoutineState> {
   late final RoutineDatasource _datasource;
 
   Future<void> create(String name) async {
+    if (name.isEmpty) {
+      emit(state.copyWith(status: StateStatus.failure));
+      return;
+    }
+
     emit(state.copyWith(status: StateStatus.loading));
     try {
       final routine = _datasource.create(name);

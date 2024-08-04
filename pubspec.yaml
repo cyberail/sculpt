@@ -16,6 +16,7 @@ dependencies:
   go_router: ^13.2.0
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
+  field_suggestion: ^0.2.5
 
 dev_dependencies:
   flutter_test:

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
-import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/large_btn.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
-import 'package:sculpt/presentation/ui_kit/fileds/default_text_field.dart';
+import 'package:sculpt/presentation/ui_kit/fields/default_text_field.dart';
+import 'package:sculpt/presentation/ui_kit/snackbar/error_snackbar.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/routine_tile.dart';
 import 'package:sculpt/utils/validators.dart';
 
@@ -32,6 +32,11 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
             created = true;
             textController.clear();
           });
+        }
+        if (state.status == StateStatus.failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            UiKitSnackBars.error(context, label: "Please provide the name for the routine."),
+          );
         }
       },
       builder: (context, state) {
