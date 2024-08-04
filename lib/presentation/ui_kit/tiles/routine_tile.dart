@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
+import 'package:sculpt/presentation/screens/routine/routine_detail.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class RoutineTile extends StatelessWidget {
@@ -58,7 +59,11 @@ class RoutineTile extends StatelessWidget {
               ),
               Spacer(),
               InkWell(
-                onTap: () => context.push("/routine/:${routine.id}"),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  return RoutineDetailScreen(
+                    routine: routine,
+                  );
+                })),
                 child: Text(
                   "View more",
                   style: TextStyle(

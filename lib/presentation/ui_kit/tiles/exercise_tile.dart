@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class WorkoutTile extends StatelessWidget {
-  const WorkoutTile({super.key});
+class ExerciseTile extends StatelessWidget {
+  const ExerciseTile({super.key});
 
   @override
   Widget build(BuildContext context) {

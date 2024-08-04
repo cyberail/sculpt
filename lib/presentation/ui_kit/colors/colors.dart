@@ -7,4 +7,5 @@ abstract class UIKitColors {
   static const Color primaryFgColor = Color(0xff3F0071);
   static const Color secondaryFgColor = Color(0xffFB2576);
   static const Color grey = Color(0xff818181);
+  static const Color black = Color(0xff000000);
 }
