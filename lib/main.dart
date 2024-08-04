@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sculpt/infrastructure/injections.dart';
+import 'package:sculpt/infrastructure/persistence/injections.dart';
 import 'package:sculpt/presentation/router/router.dart';
 import 'package:sculpt/presentation/screens/dashboard.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';

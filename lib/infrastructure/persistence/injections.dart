@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:sculpt/infrastructure/isar_database.dart';
+import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 
 final sl = GetIt.instance;
 
