@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
-import 'package:sculpt/presentation/screens/routine/workout/workout_detail.dart';
+import 'package:sculpt/presentation/screens/routine/exercise/exercise_detail.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/icon_button/remove_button.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/icon_button/start_button.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';

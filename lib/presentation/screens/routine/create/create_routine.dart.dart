@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
+import 'package:sculpt/infrastructure/datasource/exercise.dart';
+import 'package:sculpt/infrastructure/persistence/injections.dart';
+import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/large_btn.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
@@ -21,7 +25,16 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
 
+  late ExerciseCubit exerciseCubit;
+
   bool created = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    exerciseCubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,19 +90,22 @@ class _CreateRoutineScreenState extends State<CreateRoutineScreen> {
       );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        RoutineTile(routine: routine),
-        const SizedBox(height: 20),
-        LargeBtn(
-          label: "Create Another",
-          icon: Icons.add,
-          onTap: () => setState(() {
-            created = false;
-          }),
-        ),
-      ],
+    return BlocProvider(
+      create: (context) => exerciseCubit,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RoutineTile(routine: routine),
+          const SizedBox(height: 20),
+          LargeBtn(
+            label: "Create Another",
+            icon: Icons.add,
+            onTap: () => setState(() {
+              created = false;
+            }),
+          ),
+        ],
+      ),
     );
   }
 }

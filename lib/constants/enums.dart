@@ -1,6 +1,10 @@
 enum WorkoutType {
-  manual,
-  time,
+  reps("Sets and reps"),
+  time('Time based');
+
+  const WorkoutType(this.val);
+
+  final String val;
 }
 
 enum StateStatus {

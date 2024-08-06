@@ -13,6 +13,16 @@ class RoutineDatasource extends BaseDatasource {
     return result;
   }
 
+  List<Routine> getAllRoutines() {
+    final result = db.getAllRoutines();
+    return result;
+  }
+
+  Routine? getById(Routine routine) {
+    final result = db.getById(routine.id);
+    return result;
+  }
+
   // Future<void> create() {
 
   // }

@@ -6,6 +6,7 @@ class DefaultTextField extends StatelessWidget {
   final String? Function(String?) validator;
   final String label;
   final String hintText;
+  final TextInputType? inputType;
 
   const DefaultTextField({
     super.key,
@@ -13,6 +14,7 @@ class DefaultTextField extends StatelessWidget {
     required this.label,
     required this.hintText,
     required this.controller,
+    this.inputType,
   });
 
   @override
@@ -21,6 +23,7 @@ class DefaultTextField extends StatelessWidget {
       controller: controller,
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
       style: const TextStyle(color: UIKitColors.white),
+      keyboardType: inputType,
       decoration: InputDecoration(
         labelText: label,
         hintStyle: const TextStyle(color: UIKitColors.grey),

@@ -21,7 +21,7 @@ const ExerciseSchema = Schema(
     r'time': PropertySchema(
       id: 1,
       name: r'time',
-      type: IsarType.long,
+      type: IsarType.double,
     ),
     r'type': PropertySchema(
       id: 2,
@@ -54,7 +54,7 @@ void _exerciseSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.name);
-  writer.writeLong(offsets[1], object.time);
+  writer.writeDouble(offsets[1], object.time);
   writer.writeString(offsets[2], object.type.name);
 }
 
@@ -66,10 +66,10 @@ Exercise _exerciseDeserialize(
 ) {
   final object = Exercise();
   object.name = reader.readString(offsets[0]);
-  object.time = reader.readLong(offsets[1]);
+  object.time = reader.readDouble(offsets[1]);
   object.type =
       _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[2])] ??
-          WorkoutType.manual;
+          WorkoutType.reps;
   return object;
 }
 
@@ -83,21 +83,21 @@ P _exerciseDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 2:
       return (_ExercisetypeValueEnumMap[reader.readStringOrNull(offset)] ??
-          WorkoutType.manual) as P;
+          WorkoutType.reps) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
 const _ExercisetypeEnumValueMap = {
-  r'manual': r'manual',
+  r'reps': r'reps',
   r'time': r'time',
 };
 const _ExercisetypeValueEnumMap = {
-  r'manual': WorkoutType.manual,
+  r'reps': WorkoutType.reps,
   r'time': WorkoutType.time,
 };
 
@@ -234,46 +234,54 @@ extension ExerciseQueryFilter
   }
 
   QueryBuilder<Exercise, Exercise, QAfterFilterCondition> timeEqualTo(
-      int value) {
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'time',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Exercise, Exercise, QAfterFilterCondition> timeGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'time',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Exercise, Exercise, QAfterFilterCondition> timeLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'time',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<Exercise, Exercise, QAfterFilterCondition> timeBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -282,6 +290,7 @@ extension ExerciseQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }

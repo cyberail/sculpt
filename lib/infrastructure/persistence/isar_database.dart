@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 
 class IsarDatabase {
@@ -17,5 +18,46 @@ class IsarDatabase {
     });
 
     return routine;
+  }
+
+  Routine? getById(Id id) {
+    final routine = db.routines.getSync(id);
+
+    return routine;
+  }
+
+  Exercise createExercise(Routine routine, Exercise exercise) {
+    db.writeTxnSync(() {
+      routine.exercises = routine.exercises.toList();
+      routine.exercises.add(exercise);
+      db.routines.putSync(routine);
+    });
+
+    return exercise;
+  }
+
+  Exercise updateExercise(Routine routine, Exercise exerciseToUpdate, Exercise exercise) {
+    db.writeTxnSync(() {
+      routine.exercises.removeWhere((element) => element == exerciseToUpdate);
+      routine.exercises.add(exercise);
+      db.routines.putSync(routine);
+    });
+
+    return exercise;
+  }
+
+  Exercise deleteExercise(Routine routine, Exercise exercise) {
+    db.writeTxnSync(() {
+      routine.exercises.removeWhere((element) => element == exercise);
+      db.routines.putSync(routine);
+    });
+
+    return exercise;
+  }
+
+  List<Routine> getAllRoutines() {
+    final routines = db.routines.where().findAllSync();
+
+    return routines;
   }
 }

@@ -14,5 +14,5 @@ class Exercise {
   WorkoutType type = WorkoutType.time;
 
   @Name('time')
-  int time = -1;
+  double time = -1;
 }

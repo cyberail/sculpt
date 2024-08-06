@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sculpt/presentation/screens/dashboard.dart';
 import 'package:sculpt/presentation/screens/routine/create/create_routine.dart.dart';
 import 'package:sculpt/presentation/screens/routine/routine_list.dart';
-import 'package:sculpt/presentation/screens/routine/workout/workout_list.dart';
+import 'package:sculpt/presentation/screens/routine/exercise/exercise_list.dart';
 
 final router = GoRouter(
   initialLocation: "/",
