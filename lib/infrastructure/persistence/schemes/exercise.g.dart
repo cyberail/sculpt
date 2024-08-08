@@ -23,18 +23,28 @@ const ExerciseSchema = Schema(
       name: r'reps',
       type: IsarType.long,
     ),
-    r'sets': PropertySchema(
+    r'reps_rest_min': PropertySchema(
       id: 2,
+      name: r'reps_rest_min',
+      type: IsarType.double,
+    ),
+    r'rest_after_min': PropertySchema(
+      id: 3,
+      name: r'rest_after_min',
+      type: IsarType.double,
+    ),
+    r'sets': PropertySchema(
+      id: 4,
       name: r'sets',
       type: IsarType.long,
     ),
     r'time': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'time',
       type: IsarType.double,
     ),
     r'type': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'type',
       type: IsarType.string,
       enumMap: _ExercisetypeEnumValueMap,
@@ -65,9 +75,11 @@ void _exerciseSerialize(
 ) {
   writer.writeString(offsets[0], object.name);
   writer.writeLong(offsets[1], object.reps);
-  writer.writeLong(offsets[2], object.sets);
-  writer.writeDouble(offsets[3], object.time);
-  writer.writeString(offsets[4], object.type.name);
+  writer.writeDouble(offsets[2], object.repsRestMin);
+  writer.writeDouble(offsets[3], object.restAfterMin);
+  writer.writeLong(offsets[4], object.sets);
+  writer.writeDouble(offsets[5], object.time);
+  writer.writeString(offsets[6], object.type.name);
 }
 
 Exercise _exerciseDeserialize(
@@ -79,10 +91,12 @@ Exercise _exerciseDeserialize(
   final object = Exercise();
   object.name = reader.readString(offsets[0]);
   object.reps = reader.readLongOrNull(offsets[1]);
-  object.sets = reader.readLongOrNull(offsets[2]);
-  object.time = reader.readDouble(offsets[3]);
+  object.repsRestMin = reader.readDoubleOrNull(offsets[2]);
+  object.restAfterMin = reader.readDoubleOrNull(offsets[3]);
+  object.sets = reader.readLongOrNull(offsets[4]);
+  object.time = reader.readDouble(offsets[5]);
   object.type =
-      _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[4])] ??
+      _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[6])] ??
           WorkoutType.reps;
   return object;
 }
@@ -99,10 +113,14 @@ P _exerciseDeserializeProp<P>(
     case 1:
       return (reader.readLongOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 4:
+      return (reader.readLongOrNull(offset)) as P;
+    case 5:
+      return (reader.readDouble(offset)) as P;
+    case 6:
       return (_ExercisetypeValueEnumMap[reader.readStringOrNull(offset)] ??
           WorkoutType.reps) as P;
     default:
@@ -316,6 +334,166 @@ extension ExerciseQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> repsRestMinIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'reps_rest_min',
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition>
+      repsRestMinIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'reps_rest_min',
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> repsRestMinEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'reps_rest_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition>
+      repsRestMinGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'reps_rest_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> repsRestMinLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'reps_rest_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> repsRestMinBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'reps_rest_min',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> restAfterMinIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'rest_after_min',
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition>
+      restAfterMinIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'rest_after_min',
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> restAfterMinEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rest_after_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition>
+      restAfterMinGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'rest_after_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> restAfterMinLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'rest_after_min',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> restAfterMinBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'rest_after_min',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }

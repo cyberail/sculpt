@@ -16,9 +16,15 @@ class Exercise {
   @Name('time')
   double time = -1;
 
+  @Name('rest_after_min')
+  double? restAfterMin = -1;
+
   @Name('sets')
   int? sets = -1;
 
   @Name('reps')
   int? reps = -1;
+
+  @Name('reps_rest_min')
+  double? repsRestMin = -1;
 }
