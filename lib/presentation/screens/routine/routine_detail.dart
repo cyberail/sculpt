@@ -7,9 +7,11 @@ import 'package:sculpt/infrastructure/datasource/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/injections.dart';
 import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
+import 'package:sculpt/models/progress.dart';
 import 'package:sculpt/presentation/screens/routine/exercise/create_exercise.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/floating_addition_btn.dart';
+import 'package:sculpt/presentation/ui_kit/buttons/resizable_floating_button.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 import 'package:sculpt/presentation/ui_kit/errors/empty.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/exercise_tile.dart';
@@ -25,29 +27,59 @@ class RoutineDetailScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: UIKitColors.primaryColor,
           appBar: defaultAppBar(context, "Routine: ${routine.name} "),
-          floatingActionButton: FloatingAdditionButton(onTap: () {
-            final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
-            showModalBottomSheet(
-              context: context,
-              backgroundColor: UIKitColors.primaryColor,
-              builder: (_) => BlocProvider(
-                create: (_) => cubit,
-                child: CreateExercise(routine: routine),
+          body: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _checkAndBuild(),
               ),
-              showDragHandle: true,
-              useSafeArea: true,
-              isScrollControlled: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: FloatingAdditionButton(onTap: () {
+                  final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: UIKitColors.primaryColor,
+                    builder: (_) => BlocProvider(
+                      create: (_) => cubit,
+                      child: CreateExercise(routine: routine),
+                    ),
+                    showDragHandle: true,
+                    useSafeArea: true,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: ResizableFloatingButton(
+                    iconSize: 30,
+                    icon: Icons.play_arrow,
+                    color: UIKitColors.green,
+                    onTap: () {},
+                  ),
                 ),
               ),
-            );
-          }),
-          body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: _checkAndBuild(),
+              Positioned(
+                bottom: 20,
+                left: 20,
+                child: FloatingAdditionButton(
+                  icon: Icons.edit,
+                  color: UIKitColors.primaryFgColor,
+                  onTap: () {},
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -69,8 +101,15 @@ class RoutineDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
               ),
-              child: ExerciseTile(exercise: exercise));
-        })
+              child: ExerciseTile(
+                exercise: exercise,
+                progress: ExerciseProgress(
+                  exercise: exercise,
+                  currentSeconds: 77,
+                ),
+              ));
+        }),
+        const SizedBox(height: 120),
       ],
     );
   }

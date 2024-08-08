@@ -26,6 +26,8 @@ class _CreateExerciseState extends State<CreateExercise> {
   final _fromKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final timeController = TextEditingController();
+  final setsController = TextEditingController();
+  final repsController = TextEditingController();
   final focusNode = FocusNode();
 
   WorkoutType? selectedWorkoutType;
@@ -89,6 +91,10 @@ class _CreateExerciseState extends State<CreateExercise> {
                     DropdownButton(
                       itemHeight: 50,
                       value: selectedWorkoutType,
+                      hint: const Text(
+                        "Type: timed or sets",
+                        style: TextStyle(color: UIKitColors.grey, fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                       style: TextStyle(color: UIKitColors.white, fontSize: 20, fontWeight: FontWeight.bold),
                       dropdownColor: UIKitColors.black,
                       isExpanded: true,
@@ -112,42 +118,12 @@ class _CreateExerciseState extends State<CreateExercise> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    DefaultTextField(
-                      controller: timeController,
-                      inputType: TextInputType.number,
-                      label: "Duration in minutes",
-                      hintText: "Dead-lift etc.",
-                      validator: (value) => Validators.emptyTextValidation(context, value),
-                    ),
+                    ...loadRepetitionField(context),
                     const SizedBox(height: 40),
                     LargeBtn(
                       label: "Create",
                       icon: Icons.add,
-                      onTap: () {
-                        if (_fromKey.currentState?.validate() == false || selectedWorkoutType == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            UiKitSnackBars.error(context, label: "Fill all the fields"),
-                          );
-                          return;
-                        }
-
-                        if (exercise != null) {
-                          context.read<ExerciseCubit>().update(
-                                routine,
-                                exercise!,
-                                name: nameController.text,
-                                type: WorkoutType.time,
-                                time: double.tryParse(timeController.text),
-                              );
-                        } else {
-                          context.read<ExerciseCubit>().create(
-                                routine,
-                                name: nameController.text,
-                                type: WorkoutType.time,
-                                time: double.tryParse(timeController.text),
-                              );
-                        }
-                      },
+                      onTap: () => _validateAndUpdate(context),
                     ),
                   ],
                 ),
@@ -155,5 +131,69 @@ class _CreateExerciseState extends State<CreateExercise> {
         ),
       ),
     );
+  }
+
+  List<Widget> loadRepetitionField(BuildContext context) {
+    if (selectedWorkoutType == WorkoutType.reps) {
+      return [
+        DefaultTextField(
+          controller: setsController,
+          inputType: TextInputType.number,
+          label: "Number of sets",
+          hintText: "e.g. 3",
+          validator: (value) => Validators.emptyTextValidation(context, value),
+        ),
+        const SizedBox(height: 20),
+        DefaultTextField(
+          controller: repsController,
+          inputType: TextInputType.number,
+          label: "Number of reps",
+          hintText: "e.g. 12",
+          validator: (value) => Validators.emptyTextValidation(context, value),
+        )
+      ];
+    } else if (selectedWorkoutType == WorkoutType.time) {
+      return [
+        DefaultTextField(
+          controller: timeController,
+          inputType: TextInputType.number,
+          label: "Duration in minutes",
+          hintText: "Dead-lift etc.",
+          validator: (value) => Validators.emptyTextValidation(context, value),
+        )
+      ];
+    } else {
+      return [const SizedBox.shrink()];
+    }
+  }
+
+  _validateAndUpdate(BuildContext context) {
+    if (_fromKey.currentState?.validate() == false || selectedWorkoutType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        UiKitSnackBars.error(context, label: "Fill all the fields"),
+      );
+      return;
+    }
+
+    if (exercise != null) {
+      context.read<ExerciseCubit>().update(
+            routine,
+            exercise!,
+            name: nameController.text,
+            type: selectedWorkoutType ?? WorkoutType.time,
+            time: double.tryParse(timeController.text),
+            sets: int.tryParse(setsController.text),
+            reps: int.tryParse(repsController.text),
+          );
+    } else {
+      context.read<ExerciseCubit>().create(
+            routine,
+            name: nameController.text,
+            type: selectedWorkoutType ?? WorkoutType.time,
+            time: double.tryParse(timeController.text),
+            sets: int.tryParse(setsController.text),
+            reps: int.tryParse(repsController.text),
+          );
+    }
   }
 }

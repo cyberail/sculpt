@@ -8,5 +8,5 @@ abstract class UIKitColors {
   static const Color secondaryFgColor = Color(0xffFB2576);
   static const Color grey = Color(0xff818181);
   static const Color black = Color(0xff000000);
-  static const Color green = Color(0x5E017857);
+  static const Color green = Color(0xff017857);
 }

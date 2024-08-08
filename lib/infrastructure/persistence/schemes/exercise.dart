@@ -15,4 +15,10 @@ class Exercise {
 
   @Name('time')
   double time = -1;
+
+  @Name('sets')
+  int? sets = -1;
+
+  @Name('reps')
+  int? reps = -1;
 }

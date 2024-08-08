@@ -31,16 +31,6 @@ class RoutineTile extends StatelessWidget {
                 style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
               const Spacer(),
-              const Icon(
-                Icons.timelapse_rounded,
-                color: UIKitColors.white,
-                size: 25,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "${routine.getDurationSum()}m",
-                style: const TextStyle(color: UIKitColors.white, fontSize: 16),
-              ),
             ],
           ),
           const SizedBox(height: 25),
@@ -53,7 +43,18 @@ class RoutineTile extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                "${routine.exercises.length} exercises",
+                "${routine.exercises.length} Excs",
+                style: const TextStyle(color: UIKitColors.white, fontSize: 16),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.timelapse_rounded,
+                color: UIKitColors.white,
+                size: 25,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                "${routine.getDurationSum()} min",
                 style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
               const Spacer(),

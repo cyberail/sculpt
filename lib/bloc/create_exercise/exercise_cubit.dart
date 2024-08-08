@@ -14,13 +14,22 @@ class ExerciseCubit extends Cubit<ExerciseState> {
 
   late final ExerciseDatasource _datasource;
 
-  Future<void> create(Routine routine, {required String name, required WorkoutType type, double? time = -1}) async {
+  Future<void> create(
+    Routine routine, {
+    required String name,
+    required WorkoutType type,
+    double? time = -1,
+    int? sets = -1,
+    int? reps = -1,
+  }) async {
     emit(state.copyWith(event: ExerciseEvent.createLoading));
     try {
       final exercise = Exercise()
         ..name = name
         ..type = type
-        ..time = time ?? -1;
+        ..time = time ?? -1
+        ..sets = sets
+        ..reps = reps;
 
       _datasource.create(routine, exercise);
 
@@ -31,8 +40,15 @@ class ExerciseCubit extends Cubit<ExerciseState> {
     }
   }
 
-  Future<void> update(Routine routine, Exercise exerciseToUpdate,
-      {required String name, required WorkoutType type, double? time = -1}) async {
+  Future<void> update(
+    Routine routine,
+    Exercise exerciseToUpdate, {
+    required String name,
+    required WorkoutType type,
+    double? time = -1,
+    int? sets = -1,
+    int? reps = -1,
+  }) async {
     throw UnimplementedError();
   }
 

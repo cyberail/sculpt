@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
-class FloatingAdditionButton extends StatelessWidget {
+class ResizableFloatingButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color color;
   final IconData icon;
   final double? iconSize;
-  const FloatingAdditionButton({
+  const ResizableFloatingButton({
     super.key,
     required this.onTap,
     this.color = UIKitColors.secondaryFgColor,
@@ -16,13 +16,16 @@ class FloatingAdditionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: onTap,
-      backgroundColor: color,
-      child: Icon(
-        icon,
-        size: iconSize,
-        color: UIKitColors.white,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(60)),
+        child: Icon(
+          icon,
+          size: iconSize,
+          color: UIKitColors.white,
+        ),
       ),
     );
   }
