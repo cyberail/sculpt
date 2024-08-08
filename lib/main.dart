@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/list_routine/list_routine_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
+import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/injections.dart';
 import 'package:sculpt/infrastructure/persistence/isar_database.dart';
@@ -31,6 +32,11 @@ class MainApp extends StatelessWidget {
           final routineListCubit = ListRoutineCubit(
             RoutineDatasource(db: sl.get<IsarDatabase>()),
           );
+
+          final routineControlCubit = RoutineControlCubit(
+            datasource: RoutineDatasource(db: sl.get<IsarDatabase>()),
+          );
+
           return MultiBlocProvider(
             providers: [
               BlocProvider(
@@ -38,6 +44,9 @@ class MainApp extends StatelessWidget {
               ),
               BlocProvider(
                 create: (context) => routineListCubit,
+              ),
+              BlocProvider(
+                create: (context) => routineControlCubit,
               ),
             ],
             child: MaterialApp.router(

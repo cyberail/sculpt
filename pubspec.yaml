@@ -17,6 +17,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
   field_suggestion: ^0.2.5
+  sleek_circular_slider: ^2.0.1
 
 dev_dependencies:
   flutter_test:

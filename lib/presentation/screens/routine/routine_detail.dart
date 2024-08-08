@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
+import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/infrastructure/datasource/exercise.dart';
+import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/injections.dart';
 import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/models/progress.dart';
+import 'package:sculpt/presentation/screens/routine/active_routine.dart';
 import 'package:sculpt/presentation/screens/routine/exercise/create_exercise.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/floating_addition_btn.dart';
@@ -66,7 +69,15 @@ class RoutineDetailScreen extends StatelessWidget {
                     iconSize: 30,
                     icon: Icons.play_arrow,
                     color: UIKitColors.green,
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          builder: (_) {
+                            return ActiveRoutine(routine: routine);
+                          });
+                    },
                   ),
                 ),
               ),

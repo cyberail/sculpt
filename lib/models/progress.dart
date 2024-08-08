@@ -5,7 +5,7 @@ import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 
 class ExerciseProgress {
-  final double? currentSeconds;
+  final int? currentSeconds;
   final double? currentSet;
   final Exercise exercise;
 
@@ -23,11 +23,12 @@ class ExerciseProgress {
     }
   }
 
+  double get totalSeconds => exercise.time * 60;
+
   double timePercentage() {
     if (currentSeconds == null || exercise.time == -1) return 0;
-    final seconds = exercise.time * 60;
 
-    return (currentSeconds! / seconds) * 100;
+    return (currentSeconds! / totalSeconds) * 100;
   }
 
   double repsPercentage() {
