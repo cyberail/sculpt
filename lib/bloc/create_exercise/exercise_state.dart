@@ -20,4 +20,8 @@ enum ExerciseEvent {
   getAllLoading,
   getAllSuccess,
   getAllFailure,
+
+  deleteLoading,
+  deleteSuccess,
+  deleteFailure,
 }

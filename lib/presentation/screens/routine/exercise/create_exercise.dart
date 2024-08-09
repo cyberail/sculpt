@@ -28,6 +28,9 @@ class _CreateExerciseState extends State<CreateExercise> {
   final timeController = TextEditingController();
   final setsController = TextEditingController();
   final repsController = TextEditingController();
+  final restAfterController = TextEditingController();
+  final restBetweenController = TextEditingController();
+
   final focusNode = FocusNode();
 
   WorkoutType? selectedWorkoutType;
@@ -62,6 +65,10 @@ class _CreateExerciseState extends State<CreateExercise> {
             selectedWorkoutType = null;
             nameController.clear();
             timeController.clear();
+            setsController.clear();
+            repsController.clear();
+            restAfterController.clear();
+            restBetweenController.clear();
           });
         }
       },
@@ -73,63 +80,93 @@ class _CreateExerciseState extends State<CreateExercise> {
             title,
           ),
           backgroundColor: UIKitColors.primaryColor,
-          body: Form(
-              key: _fromKey,
-              child: Container(
-                margin: EdgeInsets.only(top: 30),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DefaultTextField(
-                      controller: nameController,
-                      label: "Exercise name",
-                      hintText: "Dead-lift etc.",
-                      validator: (value) => Validators.emptyTextValidation(context, value),
-                    ),
-                    const SizedBox(height: 20),
-                    DropdownButton(
-                      itemHeight: 50,
-                      value: selectedWorkoutType,
-                      hint: const Text(
-                        "Type: timed or sets",
-                        style: TextStyle(color: UIKitColors.grey, fontSize: 20, fontWeight: FontWeight.bold),
+          body: SingleChildScrollView(
+            child: Form(
+                key: _fromKey,
+                child: Container(
+                  margin: EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DefaultTextField(
+                        controller: nameController,
+                        label: "Exercise name",
+                        hintText: "Dead-lift etc.",
+                        validator: (value) => Validators.emptyTextValidation(context, value),
                       ),
-                      style: TextStyle(color: UIKitColors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                      dropdownColor: UIKitColors.black,
-                      isExpanded: true,
-                      items: WorkoutType.values
-                          .map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(
-                                  e.val,
-                                  style: TextStyle(
-                                    color: UIKitColors.white,
-                                    fontSize: 20,
+                      const SizedBox(height: 20),
+                      DropdownButton(
+                        itemHeight: 50,
+                        value: selectedWorkoutType,
+                        hint: const Text(
+                          "Type: timed or sets",
+                          style: TextStyle(color: UIKitColors.grey, fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        style: TextStyle(color: UIKitColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                        dropdownColor: UIKitColors.black,
+                        isExpanded: true,
+                        items: WorkoutType.values
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e.val,
+                                    style: TextStyle(
+                                      color: UIKitColors.white,
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                ),
-                                enabled: true,
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedWorkoutType = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ...loadRepetitionField(context),
-                    const SizedBox(height: 40),
-                    LargeBtn(
-                      label: "Create",
-                      icon: Icons.add,
-                      onTap: () => _validateAndUpdate(context),
-                    ),
-                  ],
-                ),
-              )),
+                                  enabled: true,
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedWorkoutType = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ...loadRepetitionField(context),
+                      const SizedBox(height: 20),
+                      getRestBetween(context),
+                      const SizedBox(height: 20),
+                      getRestAfter(context),
+                      const SizedBox(height: 40),
+                      LargeBtn(
+                        label: "Create",
+                        icon: Icons.add,
+                        onTap: () => _validateAndUpdate(context),
+                      ),
+                    ],
+                  ),
+                )),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget getRestBetween(BuildContext context) {
+    if (selectedWorkoutType != WorkoutType.reps && selectedWorkoutType != WorkoutType.timeReps) {
+      return const SizedBox.shrink();
+    }
+
+    return DefaultTextField(
+      controller: restBetweenController,
+      inputType: TextInputType.number,
+      label: "Resting minutes between reps",
+      hintText: "e.g. 1",
+      validator: (value) => Validators.emptyTextValidation(context, value),
+    );
+  }
+
+  Widget getRestAfter(BuildContext context) {
+    return DefaultTextField(
+      controller: restAfterController,
+      inputType: TextInputType.number,
+      label: "Duration in minutes after exercise",
+      hintText: "e.g. 2",
+      validator: (value) => Validators.emptyTextValidation(context, value),
     );
   }
 
@@ -158,7 +195,24 @@ class _CreateExerciseState extends State<CreateExercise> {
           controller: timeController,
           inputType: TextInputType.number,
           label: "Duration in minutes",
-          hintText: "Dead-lift etc.",
+          hintText: "e.g 2",
+          validator: (value) => Validators.emptyTextValidation(context, value),
+        )
+      ];
+    } else if (selectedWorkoutType == WorkoutType.timeReps) {
+      return [
+        DefaultTextField(
+          controller: setsController,
+          inputType: TextInputType.number,
+          label: "Number of sets",
+          hintText: "e.g. 3",
+          validator: (value) => Validators.emptyTextValidation(context, value),
+        ),
+        DefaultTextField(
+          controller: timeController,
+          inputType: TextInputType.number,
+          label: "Duration in minutes",
+          hintText: "e.g. 2",
           validator: (value) => Validators.emptyTextValidation(context, value),
         )
       ];

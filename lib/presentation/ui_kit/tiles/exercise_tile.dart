@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
+import 'package:sculpt/bloc/routine/routine_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
+import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/models/progress.dart';
 import 'package:sculpt/presentation/screens/routine/exercise/exercise_detail.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/icon_button/remove_button.dart';
@@ -9,17 +13,19 @@ import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
+  final Routine routine;
   final ExerciseProgress? progress;
   const ExerciseTile({
     super.key,
     required this.exercise,
     this.progress,
+    required this.routine,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 140),
+      constraints: const BoxConstraints(maxHeight: 220),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: UIKitColors.secondaryColor,
@@ -42,6 +48,7 @@ class ExerciseTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -52,9 +59,47 @@ class ExerciseTile extends StatelessWidget {
                       style: const TextStyle(color: UIKitColors.white, fontSize: 16),
                     ),
                     const Spacer(),
-                    UIKitRemoveButton(onTap: () {}),
+                    BlocBuilder<ExerciseCubit, ExerciseState>(
+                      builder: (context, state) {
+                        return UIKitRemoveButton(
+                          loading: state.event == ExerciseEvent.deleteLoading,
+                          onTap: () {
+                            context.read<RoutineCubit>().deleteExercise(
+                                  routine,
+                                  exercise,
+                                );
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
+                const SizedBox(height: 25),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.restart_alt,
+                      color: UIKitColors.white,
+                      size: 25,
+                    ),
+                    Text(
+                      "between ${exercise.repsRestMin ?? ''}",
+                      style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                    ),
+                    Spacer(),
+                    const Icon(
+                      Icons.history,
+                      color: UIKitColors.white,
+                      size: 25,
+                    ),
+                    Text(
+                      "after ${exercise.repsRestMin ?? ''}",
+                      style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25),
+                const Divider(height: 2, color: UIKitColors.white),
                 const SizedBox(height: 25),
                 Row(
                   children: [
@@ -62,7 +107,7 @@ class ExerciseTile extends StatelessWidget {
                     const SizedBox(width: 4),
                     const Text(
                       "Start",
-                      style: TextStyle(color: UIKitColors.white, fontSize: 14),
+                      style: TextStyle(color: UIKitColors.white, fontSize: 16),
                     ),
                     const SizedBox(width: 8),
                     const Icon(

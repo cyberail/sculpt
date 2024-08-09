@@ -21,6 +21,8 @@ class ExerciseCubit extends Cubit<ExerciseState> {
     double? time = -1,
     int? sets = -1,
     int? reps = -1,
+    double? restAfter = -1,
+    double? restBetween = -1,
   }) async {
     emit(state.copyWith(event: ExerciseEvent.createLoading));
     try {
@@ -29,7 +31,9 @@ class ExerciseCubit extends Cubit<ExerciseState> {
         ..type = type
         ..time = time ?? -1
         ..sets = sets
-        ..reps = reps;
+        ..reps = reps
+        ..repsRestMin = restBetween
+        ..restAfterMin = restAfter;
 
       _datasource.create(routine, exercise);
 
@@ -48,11 +52,9 @@ class ExerciseCubit extends Cubit<ExerciseState> {
     double? time = -1,
     int? sets = -1,
     int? reps = -1,
+    double? restAfter = -1,
+    double? restBetween = -1,
   }) async {
-    throw UnimplementedError();
-  }
-
-  Future<void> delete(Routine routine, Exercise exercise) async {
     throw UnimplementedError();
   }
 

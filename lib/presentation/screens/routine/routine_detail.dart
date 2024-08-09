@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
-import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/infrastructure/datasource/exercise.dart';
-import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/injections.dart';
 import 'package:sculpt/infrastructure/persistence/isar_database.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
@@ -108,17 +106,22 @@ class RoutineDetailScreen extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       children: [
         ...routine.exercises.map((exercise) {
-          return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              child: ExerciseTile(
-                exercise: exercise,
-                progress: ExerciseProgress(
-                  exercise: exercise,
-                  currentSeconds: 77,
+          final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
+          return BlocProvider.value(
+            value: cubit,
+            child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
                 ),
-              ));
+                child: ExerciseTile(
+                  exercise: exercise,
+                  routine: routine,
+                  progress: ExerciseProgress(
+                    exercise: exercise,
+                    currentSeconds: 77,
+                  ),
+                )),
+          );
         }),
         const SizedBox(height: 120),
       ],

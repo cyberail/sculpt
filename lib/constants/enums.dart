@@ -1,6 +1,7 @@
 enum WorkoutType {
   reps("Sets and reps"),
-  time('Time based');
+  time('Time based'),
+  timeReps('Timed reps');
 
   const WorkoutType(this.val);
 

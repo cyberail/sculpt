@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/datasource/routine.dart';
+import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 
 part 'routine_state.dart';
@@ -40,6 +42,16 @@ class RoutineCubit extends Cubit<RoutineState> {
     } catch (e) {
       debugPrint(e.toString());
       emit(state.copyWith(status: StateStatus.failure));
+    }
+  }
+
+  Future<void> deleteExercise(Routine routine, Exercise exercise) async {
+    try {
+      emit(state.copyWith(event: RoutineStateEvent.deleteExerciseLoading));
+      final updateRoutine = _datasource.deleteExercise(routine, exercise);
+      emit(state.copyWith(event: RoutineStateEvent.deleteExerciseSuccess, routine: updateRoutine));
+    } catch (e) {
+      emit(state.copyWith(event: RoutineStateEvent.deleteExerciseFailure));
     }
   }
 }

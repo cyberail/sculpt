@@ -15,8 +15,4 @@ class ExerciseDatasource extends BaseDatasource {
   Exercise update(Routine routine, Exercise exerciseToUpdate, Exercise exercise) {
     return db.updateExercise(routine, exerciseToUpdate, exercise);
   }
-
-  Exercise delete(Routine routine, Exercise exercise) {
-    return db.deleteExercise(routine, exercise);
-  }
 }

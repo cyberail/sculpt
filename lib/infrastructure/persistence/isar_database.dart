@@ -46,13 +46,14 @@ class IsarDatabase {
     return exercise;
   }
 
-  Exercise deleteExercise(Routine routine, Exercise exercise) {
+  Routine deleteExercise(Routine routine, Exercise exercise) {
     db.writeTxnSync(() {
+      routine.exercises = routine.exercises.toList();
       routine.exercises.removeWhere((element) => element == exercise);
       db.routines.putSync(routine);
     });
 
-    return exercise;
+    return routine;
   }
 
   List<Routine> getAllRoutines() {
