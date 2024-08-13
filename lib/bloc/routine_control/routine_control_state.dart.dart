@@ -5,16 +5,18 @@ class RoutineControlState {
   final RoutineStatus status;
   final RoutineEvent? event;
   final Timer? timer;
-  Exercise? currentExercise;
+  int? currentExerciseIndex;
   int secondsPassed;
+  RestType? restType;
 
   RoutineControlState({
     this.routine,
     this.status = RoutineStatus.initial,
     this.event,
     this.timer,
-    this.currentExercise,
+    this.currentExerciseIndex,
     this.secondsPassed = 0,
+    this.restType,
   });
 
   RoutineControlState copyWith({
@@ -22,15 +24,17 @@ class RoutineControlState {
     RoutineStatus? status,
     RoutineEvent? event,
     Timer? timer,
-    Exercise? currentExercise,
+    int? currentExerciseIndex,
     int? secondsPassed,
+    RestType? restType,
   }) {
     return RoutineControlState(
       routine: routine ?? this.routine,
       status: status ?? this.status,
       event: event ?? this.event,
-      timer: timer ?? this.timer,
-      currentExercise: currentExercise ?? this.currentExercise,
+      timer: timer,
+      restType: restType,
+      currentExerciseIndex: currentExerciseIndex ?? this.currentExerciseIndex,
       secondsPassed: secondsPassed ?? this.secondsPassed,
     );
   }
@@ -47,4 +51,5 @@ enum RoutineEvent {
   stopped,
   paused,
   tick,
+  exerciseFinished,
 }

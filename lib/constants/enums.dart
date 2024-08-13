@@ -1,11 +1,18 @@
 enum WorkoutType {
   reps("Sets and reps"),
   time('Time based'),
-  timeReps('Timed reps');
+  timeReps('Timed sets'),
+
+  none('none');
 
   const WorkoutType(this.val);
 
   final String val;
+}
+
+enum RestType {
+  between,
+  after,
 }
 
 enum StateStatus {

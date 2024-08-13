@@ -25,6 +25,6 @@ class Routine {
       result += exercise.time;
     }
 
-    return result;
+    return double.parse(result.toStringAsFixed(2));
   }
 }

@@ -88,16 +88,16 @@ Exercise _exerciseDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Exercise();
-  object.name = reader.readString(offsets[0]);
-  object.reps = reader.readLongOrNull(offsets[1]);
-  object.repsRestMin = reader.readDoubleOrNull(offsets[2]);
-  object.restAfterMin = reader.readDoubleOrNull(offsets[3]);
-  object.sets = reader.readLongOrNull(offsets[4]);
-  object.time = reader.readDouble(offsets[5]);
-  object.type =
-      _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[6])] ??
-          WorkoutType.reps;
+  final object = Exercise(
+    name: reader.readStringOrNull(offsets[0]) ?? '',
+    reps: reader.readLongOrNull(offsets[1]),
+    repsRestMin: reader.readDoubleOrNull(offsets[2]),
+    restAfterMin: reader.readDoubleOrNull(offsets[3]),
+    sets: reader.readLongOrNull(offsets[4]),
+    time: reader.readDoubleOrNull(offsets[5]) ?? -1,
+    type: _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[6])] ??
+        WorkoutType.none,
+  );
   return object;
 }
 
@@ -109,7 +109,7 @@ P _exerciseDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 1:
       return (reader.readLongOrNull(offset)) as P;
     case 2:
@@ -119,10 +119,10 @@ P _exerciseDeserializeProp<P>(
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readDoubleOrNull(offset) ?? -1) as P;
     case 6:
       return (_ExercisetypeValueEnumMap[reader.readStringOrNull(offset)] ??
-          WorkoutType.reps) as P;
+          WorkoutType.none) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -131,10 +131,14 @@ P _exerciseDeserializeProp<P>(
 const _ExercisetypeEnumValueMap = {
   r'reps': r'reps',
   r'time': r'time',
+  r'timeReps': r'timeReps',
+  r'none': r'none',
 };
 const _ExercisetypeValueEnumMap = {
   r'reps': WorkoutType.reps,
   r'time': WorkoutType.time,
+  r'timeReps': WorkoutType.timeReps,
+  r'none': WorkoutType.none,
 };
 
 extension ExerciseQueryFilter

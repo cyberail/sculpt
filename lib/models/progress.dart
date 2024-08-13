@@ -8,22 +8,31 @@ class ExerciseProgress {
   final int? currentSeconds;
   final double? currentSet;
   final Exercise exercise;
+  final RestType? restType;
 
   ExerciseProgress({
     required this.exercise,
     this.currentSeconds,
     this.currentSet,
+    this.restType,
   });
 
   double get currentPercentage {
-    if (exercise.type == WorkoutType.time) {
+    if (exercise.type == WorkoutType.time || exercise.type == WorkoutType.timeReps) {
       return timePercentage();
     } else {
       return repsPercentage();
     }
   }
 
-  double get totalSeconds => exercise.time * 60;
+  double get totalSeconds {
+    if (restType == null) return exercise.time * 60;
+    if (restType == RestType.after) {
+      return exercise.restAfterMin! * 60;
+    } else {
+      return exercise.repsRestMin! * 60;
+    }
+  }
 
   double timePercentage() {
     if (currentSeconds == null || exercise.time == -1) return 0;

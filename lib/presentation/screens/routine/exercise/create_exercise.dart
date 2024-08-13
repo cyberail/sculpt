@@ -247,6 +247,8 @@ class _CreateExerciseState extends State<CreateExercise> {
             time: double.tryParse(timeController.text),
             sets: int.tryParse(setsController.text),
             reps: int.tryParse(repsController.text),
+            restBetween: double.tryParse(restBetweenController.text),
+            restAfter: double.tryParse(restAfterController.text),
           );
     }
   }

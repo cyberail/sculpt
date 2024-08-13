@@ -59,10 +59,10 @@ class ExerciseTile extends StatelessWidget {
                       style: const TextStyle(color: UIKitColors.white, fontSize: 16),
                     ),
                     const Spacer(),
-                    BlocBuilder<ExerciseCubit, ExerciseState>(
+                    BlocBuilder<RoutineCubit, RoutineState>(
                       builder: (context, state) {
                         return UIKitRemoveButton(
-                          loading: state.event == ExerciseEvent.deleteLoading,
+                          loading: state.event == RoutineStateEvent.deleteExerciseLoading,
                           onTap: () {
                             context.read<RoutineCubit>().deleteExercise(
                                   routine,
@@ -75,29 +75,36 @@ class ExerciseTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 25),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.restart_alt,
-                      color: UIKitColors.white,
-                      size: 25,
-                    ),
-                    Text(
-                      "between ${exercise.repsRestMin ?? ''}",
-                      style: TextStyle(color: UIKitColors.white, fontSize: 16),
-                    ),
-                    Spacer(),
-                    const Icon(
-                      Icons.history,
-                      color: UIKitColors.white,
-                      size: 25,
-                    ),
-                    Text(
-                      "after ${exercise.repsRestMin ?? ''}",
-                      style: TextStyle(color: UIKitColors.white, fontSize: 16),
-                    ),
-                  ],
-                ),
+                if (exercise.repsRestMin != null || exercise.restAfterMin != null)
+                  Row(
+                    children: [
+                      if (exercise.repsRestMin != null)
+                        const Icon(
+                          Icons.restart_alt,
+                          color: UIKitColors.white,
+                          size: 25,
+                        ),
+                      const SizedBox(width: 4),
+                      if (exercise.repsRestMin != null)
+                        Text(
+                          "between ${exercise.repsRestMin ?? ''}",
+                          style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                        ),
+                      if (exercise.repsRestMin != null) Spacer(),
+                      if (exercise.restAfterMin != null)
+                        const Icon(
+                          Icons.history,
+                          color: UIKitColors.white,
+                          size: 25,
+                        ),
+                      const SizedBox(width: 4),
+                      if (exercise.restAfterMin != null)
+                        Text(
+                          "after ${exercise.restAfterMin ?? ''}",
+                          style: TextStyle(color: UIKitColors.white, fontSize: 16),
+                        ),
+                    ],
+                  ),
                 const SizedBox(height: 25),
                 const Divider(height: 2, color: UIKitColors.white),
                 const SizedBox(height: 25),
@@ -110,11 +117,13 @@ class ExerciseTile extends StatelessWidget {
                       style: TextStyle(color: UIKitColors.white, fontSize: 16),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(
-                      Icons.timelapse_rounded,
-                      color: UIKitColors.white,
-                      size: 25,
-                    ),
+                    if (exercise.type != WorkoutType.reps)
+                      const Icon(
+                        Icons.timelapse_rounded,
+                        color: UIKitColors.white,
+                        size: 25,
+                      ),
+                    const SizedBox(width: 5),
                     loadRepetitionInfo(context),
                     const Spacer(),
                     Material(
@@ -150,7 +159,7 @@ class ExerciseTile extends StatelessWidget {
   }
 
   Widget loadRepetitionInfo(BuildContext context) {
-    if (exercise.type == WorkoutType.time) {
+    if (exercise.type == WorkoutType.time || exercise.type == WorkoutType.timeReps) {
       return Row(
         children: [
           Text(

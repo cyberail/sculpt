@@ -116,10 +116,10 @@ class RoutineDetailScreen extends StatelessWidget {
                 child: ExerciseTile(
                   exercise: exercise,
                   routine: routine,
-                  progress: ExerciseProgress(
-                    exercise: exercise,
-                    currentSeconds: 77,
-                  ),
+                  // progress: ExerciseProgress(
+                  //   exercise: exercise,
+                  //   currentSeconds: 77,
+                  // ),
                 )),
           );
         }),

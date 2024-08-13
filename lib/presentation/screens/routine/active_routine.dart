@@ -8,6 +8,8 @@ import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/screens/routine/widgets/countdown.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
+import 'package:sculpt/presentation/ui_kit/tiles/exercise_tile.dart';
+import 'package:sculpt/presentation/ui_kit/utils/utils.dart';
 
 class ActiveRoutine extends StatefulWidget {
   final Routine routine;
@@ -43,22 +45,32 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
     return BlocConsumer<RoutineControlCubit, RoutineControlState>(
       listener: (context, state) {},
       builder: (context, state) {
+        if (state.event == RoutineEvent.exerciseFinished) {
+          context.read<RoutineControlCubit>().start(widget.routine, newIndex: (state.currentExerciseIndex ?? 0) + 1);
+        }
+        final exercise = widget.routine.exercises[state.currentExerciseIndex!];
         return Scaffold(
           backgroundColor: UIKitColors.primaryColor,
           appBar: defaultAppBar(
             context,
             "${widget.routine.name} in progress",
+            onTap: () => Utils.showAlertDialog(context, "Are you sure you want to stop the routine ?"),
           ),
           body: Padding(
             padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: CountDown(
-                    exercise: state.currentExercise!,
+                    exercise: exercise,
                     secondsAfter: state.secondsPassed,
+                    restType: state.restType,
                   ),
+                ),
+                ExerciseTile(
+                  exercise: exercise,
+                  routine: widget.routine,
                 ),
               ],
             ),

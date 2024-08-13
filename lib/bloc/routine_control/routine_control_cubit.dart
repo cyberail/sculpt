@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
@@ -14,25 +16,184 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
 
   late final RoutineDatasource _datasource;
 
-  void start(Routine routine) async {
+  bool hasEnded(Routine routine, RestType? restType) {
+    if (state.currentExerciseIndex != null) {
+      final exercise = routine.exercises[state.currentExerciseIndex!];
+      if (restType != null) {
+        if (restType == RestType.between && state.secondsPassed == exercise.repsRestMin! * 60) {
+          return true;
+        } else if (restType == RestType.after && state.secondsPassed == exercise.restAfterMin! * 60) {
+          return true;
+        } else {
+          return false;
+        }
+      } else if (state.secondsPassed == exercise.time * 60) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool exerciseExists(Routine routine, int index) {
+    if (routine.exercises.length - 1 >= index) {
+      return true;
+    }
+
+    return false;
+  }
+
+  int? findNextExercise(Routine routine, int index) {
+    if (exerciseExists(routine, index)) {
+      return index;
+    }
+    return null;
+  }
+
+  Future<void> playSound({required String asset}) async {
+    final player = AudioPlayer();
+    final duration = await player.setAsset(asset);
+    await player.play();
+    player.dispose();
+  }
+
+  Future<void> playGetReadySound() async => playSound(asset: "assets/are_you_ready.wav");
+
+  Future<void> playReadySound() async => playSound(asset: "assets/ready.wav");
+
+  Future<void> playGoSound() async => playSound(asset: "assets/go.wav");
+
+  Future<void> playFinishSound() async => playSound(asset: "assets/finish.mp3");
+
+  bool isLastExercise(Routine routine) {
+    if (state.currentExerciseIndex! >= routine.exercises.length - 1) {
+      return true;
+    }
+    return false;
+  }
+
+  void start(
+    Routine routine, {
+    int? newIndex,
+    Exercise? currentExercise,
+    RestType? restType,
+  }) async {
+    int currentExerciseIndex = newIndex ?? 0;
+    if (!exerciseExists(routine, currentExerciseIndex)) {
+      emit(state.copyWith(event: RoutineEvent.stopped));
+      return;
+    }
+    final exercise = currentExercise ?? Exercise.clone(routine.exercises[currentExerciseIndex]);
     emit(state.copyWith(routine: routine));
     if (state.timer != null) {
       state.timer?.cancel();
     }
-    final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    final timer = Timer.periodic(
+        const Duration(
+          seconds: 1,
+        ), (timer) {
       emit(state.copyWith(
         event: RoutineEvent.tick,
-        secondsPassed: state.secondsPassed += 1,
+        secondsPassed: timer.tick,
+        restType: restType,
+        timer: timer,
       ));
-      if (state.secondsPassed == state.currentExercise!.time * 60) {
-        state.timer?.cancel();
+
+      if (restType != null && exercise.getResTimeSeconds(restType) - timer.tick == 15) {
+        playReadySound();
+      }
+
+      if (restType != null && exercise.getResTimeSeconds(restType) - timer.tick == 5) {
+        playGetReadySound();
+      }
+
+      if (restType != null && exercise.getResTimeSeconds(restType) - timer.tick == 0) {
+        playGoSound();
+      }
+      if (hasEnded(routine, restType)) {
+        if (restType == null) {
+          playFinishSound();
+        }
+        if (restType == RestType.after) {
+          emit(state.copyWith(
+            secondsPassed: 0,
+            timer: null,
+            event: RoutineEvent.exerciseFinished,
+          ));
+          timer.cancel();
+          return;
+        }
+        if (exercise.type == WorkoutType.timeReps) {
+          print("=== timereps ${exercise.tried}");
+
+          if (restType == null) {
+            exercise.tried += 1;
+          }
+
+          if (exercise.tried >= exercise.sets!) {
+            emit(state.copyWith(
+              secondsPassed: 0,
+              timer: null,
+            ));
+            if (isLastExercise(routine)) {
+              timer.cancel();
+              return;
+            }
+
+            start(
+              routine,
+              newIndex: currentExerciseIndex,
+              currentExercise: exercise,
+              restType: RestType.after,
+            );
+
+            timer.cancel();
+            return;
+          }
+
+          emit(state.copyWith(
+            secondsPassed: 0,
+            timer: null,
+          ));
+          if (restType != null) {
+            start(
+              routine,
+              newIndex: currentExerciseIndex,
+              currentExercise: exercise,
+            );
+          } else {
+            start(
+              routine,
+              newIndex: currentExerciseIndex,
+              currentExercise: exercise,
+              restType: RestType.between,
+            );
+          }
+        } else if (exercise.type == WorkoutType.time) {
+          emit(state.copyWith(
+            secondsPassed: 0,
+            timer: null,
+          ));
+          if (isLastExercise(routine)) {
+            timer.cancel();
+            return;
+          }
+
+          start(
+            routine,
+            newIndex: currentExerciseIndex,
+            currentExercise: exercise,
+            restType: RestType.after,
+          );
+        }
+        timer.cancel();
       }
     });
     emit(state.copyWith(
       status: RoutineStatus.playing,
       event: RoutineEvent.started,
       timer: timer,
-      currentExercise: state.routine?.exercises[0],
+      currentExerciseIndex: currentExerciseIndex,
     ));
   }
 

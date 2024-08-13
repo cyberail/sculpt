@@ -26,14 +26,15 @@ class ExerciseCubit extends Cubit<ExerciseState> {
   }) async {
     emit(state.copyWith(event: ExerciseEvent.createLoading));
     try {
-      final exercise = Exercise()
-        ..name = name
-        ..type = type
-        ..time = time ?? -1
-        ..sets = sets
-        ..reps = reps
-        ..repsRestMin = restBetween
-        ..restAfterMin = restAfter;
+      final exercise = Exercise(
+        name: name,
+        type: type,
+        time: time ?? -1,
+        sets: sets,
+        reps: reps,
+        repsRestMin: restBetween,
+        restAfterMin: restAfter,
+      );
 
       _datasource.create(routine, exercise);
 
