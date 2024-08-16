@@ -84,6 +84,15 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
       return;
     }
     final exercise = currentExercise ?? Exercise.clone(routine.exercises[currentExerciseIndex]);
+    if (exercise.type == WorkoutType.reps && restType == null) {
+      exercise.tried += 1;
+      emit(state.copyWith(
+        currentExerciseIndex: currentExerciseIndex,
+        currentExercise: exercise,
+        event: RoutineEvent.started,
+      ));
+      return;
+    }
     emit(state.copyWith(routine: routine));
     if (state.timer != null) {
       state.timer?.cancel();
@@ -123,7 +132,7 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
           timer.cancel();
           return;
         }
-        if (exercise.type == WorkoutType.timeReps) {
+        if (exercise.type == WorkoutType.timeReps || exercise.type == WorkoutType.reps) {
           print("=== timereps ${exercise.tried}");
 
           if (restType == null) {
@@ -136,6 +145,7 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
               timer: null,
             ));
             if (isLastExercise(routine)) {
+              emit(state.copyWith(event: RoutineEvent.fullyFinished));
               timer.cancel();
               return;
             }
@@ -175,6 +185,7 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
             timer: null,
           ));
           if (isLastExercise(routine)) {
+            emit(state.copyWith(event: RoutineEvent.fullyFinished));
             timer.cancel();
             return;
           }

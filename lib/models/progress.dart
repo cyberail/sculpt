@@ -21,6 +21,11 @@ class ExerciseProgress {
     if (exercise.type == WorkoutType.time || exercise.type == WorkoutType.timeReps) {
       return timePercentage();
     } else {
+      if (restType == RestType.after) {
+        return (currentSeconds! / (exercise.restAfterMin! * 60)) * 100;
+      } else if (restType == RestType.between) {
+        return (currentSeconds! / (exercise.repsRestMin! * 60)) * 100;
+      }
       return repsPercentage();
     }
   }

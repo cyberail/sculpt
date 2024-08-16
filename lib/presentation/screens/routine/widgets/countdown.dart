@@ -14,11 +14,13 @@ class CountDown extends StatefulWidget {
   final Exercise exercise;
   final int secondsAfter;
   final RestType? restType;
+  final bool isFinished;
   const CountDown({
     super.key,
     required this.exercise,
     required this.secondsAfter,
     this.restType,
+    this.isFinished = false,
   });
 
   @override
@@ -83,53 +85,70 @@ class _CountDownState extends State<CountDown> with TickerProviderStateMixin {
         animation: widget.restType == null ? _redAnimation : _greenAnimation,
         builder: (animation, context) {
           return SleekCircularSlider(
-            initialValue: 100 - progress.currentPercentage,
-            appearance: CircularSliderAppearance(
-              startAngle: 0,
-              angleRange: 360,
-              animationEnabled: false,
-              size: width,
-              infoProperties: InfoProperties(),
-              customWidths: CustomSliderWidths(trackWidth: 0, shadowWidth: 0, handlerSize: 0, progressBarWidth: 20),
-              customColors: CustomSliderColors(
-                trackColor: Colors.transparent,
-                progressBarColor: widget.restType == null ? _redAnimation.value : _greenAnimation.value,
+              initialValue: 100 - progress.currentPercentage,
+              appearance: CircularSliderAppearance(
+                startAngle: 0,
+                angleRange: 360,
+                animationEnabled: false,
+                size: width,
+                infoProperties: InfoProperties(),
+                customWidths: CustomSliderWidths(trackWidth: 0, shadowWidth: 0, handlerSize: 0, progressBarWidth: 20),
+                customColors: CustomSliderColors(
+                  trackColor: Colors.transparent,
+                  progressBarColor:
+                      widget.restType != null || widget.isFinished ? _greenAnimation.value : _redAnimation.value,
+                ),
               ),
-            ),
-            innerWidget: (percentage) => Center(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "$secondsProgress",
+              innerWidget: (percentage) {
+                if (widget.isFinished) {
+                  return Center(
+                    child: Text(
+                      "DONE!",
                       style: TextStyle(
-                        color: widget.restType == null ? _redAnimation.value : _greenAnimation.value,
+                        color: _greenAnimation.value,
                         fontSize: 50,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Flexible(
-                      child: SizedBox(
-                        width: 150,
-                        child: Text(
-                          widget.restType != null ? "Resting" : "${widget.exercise.name}",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: widget.restType == null ? _redAnimation.value : _greenAnimation.value,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+                  );
+                }
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.exercise.type == WorkoutType.reps && widget.restType == null
+                            ? "${widget.exercise.reps} reps"
+                            : "$secondsProgress",
+                        style: TextStyle(
+                          color: widget.restType != null ? _greenAnimation.value : _redAnimation.value,
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Flexible(
+                        child: SizedBox(
+                          width: 150,
+                          child: Text(
+                            widget.restType != null ? "Resting" : "${widget.exercise.name}",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: widget.restType != null || widget.isFinished
+                                  ? _greenAnimation.value
+                                  : _redAnimation.value,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
+                    ],
+                  ),
+                );
+              });
         });
   }
 }

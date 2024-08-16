@@ -72,6 +72,7 @@ class RoutineDetailScreen extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           useSafeArea: true,
+                          isDismissible: false,
                           builder: (_) {
                             return ActiveRoutine(routine: routine);
                           });

@@ -15,11 +15,13 @@ class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
   final Routine routine;
   final ExerciseProgress? progress;
+  final Color? backgroundColor;
   const ExerciseTile({
     super.key,
     required this.exercise,
     this.progress,
     required this.routine,
+    this.backgroundColor,
   });
 
   @override
@@ -28,7 +30,7 @@ class ExerciseTile extends StatelessWidget {
       constraints: const BoxConstraints(maxHeight: 220),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: UIKitColors.secondaryColor,
+        color: backgroundColor ?? UIKitColors.secondaryColor,
         border: Border.all(width: 1, color: UIKitColors.white),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -159,13 +161,26 @@ class ExerciseTile extends StatelessWidget {
   }
 
   Widget loadRepetitionInfo(BuildContext context) {
-    if (exercise.type == WorkoutType.time || exercise.type == WorkoutType.timeReps) {
+    if (exercise.type == WorkoutType.time) {
       return Row(
         children: [
           Text(
             "${exercise.time}m",
             style: const TextStyle(color: UIKitColors.white, fontSize: 16),
           )
+        ],
+      );
+    } else if (exercise.type == WorkoutType.timeReps) {
+      return Column(
+        children: [
+          Text(
+            "${exercise.sets} sets",
+            style: const TextStyle(color: UIKitColors.white, fontSize: 16),
+          ),
+          Text(
+            "${exercise.time * 60} secs",
+            style: const TextStyle(color: UIKitColors.white, fontSize: 16),
+          ),
         ],
       );
     } else if (exercise.type == WorkoutType.reps) {
