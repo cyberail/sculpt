@@ -153,16 +153,27 @@ class ExerciseTile extends StatelessWidget {
                             exercise: exercise,
                           );
                         })),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                          child: Text(
-                            "View or update",
-                            style: TextStyle(
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              Icons.remove_red_eye,
                               color: UIKitColors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              size: 25,
                             ),
-                          ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                              child: Text(
+                                "View",
+                                style: TextStyle(
+                                  color: UIKitColors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     )

@@ -13,7 +13,6 @@ import 'package:sculpt/presentation/ui_kit/buttons/loading_sto_btn.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/resizable_floating_button.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/current_exercise_tile.dart';
-import 'package:sculpt/presentation/ui_kit/tiles/exercise_tile.dart';
 import 'package:sculpt/presentation/ui_kit/utils/utils.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -90,6 +89,7 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
           appBar: defaultAppBar(context, "${widget.routine.name} in progress",
               onTap: () => Utils.showAlertDialog(context, "Are you sure you want to stop the routine ?"),
               icon: Icons.close,
+              enableBackButton: !isLocked,
               rightSideWidget: IconButton(
                   onPressed: () {
                     setState(() {
@@ -99,31 +99,39 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
                   icon: Icon(isLocked ? Icons.lock_rounded : Icons.lock_open_rounded))),
           body: Stack(
             children: [
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: CountDown(
-                          exercise: exercise,
-                          isFinished: isFinished,
-                          secondsAfter: state.secondsPassed,
-                          restType: state.restType,
+              Padding(
+                padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: CountDown(
+                        exercise: exercise,
+                        isFinished: isFinished,
+                        secondsAfter: state.secondsPassed,
+                        restType: state.restType,
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            CurrentExerciseTile(
+                              exercise: state.currentExercise ?? exercise,
+                              isCurrent: true,
+                            ),
+                            const SizedBox(height: 20),
+                            if (nextExercise != null)
+                              CurrentExerciseTile(
+                                exercise: nextExercise,
+                              ),
+                            SizedBox(height: 120),
+                          ],
                         ),
                       ),
-                      CurrentExerciseTile(
-                        exercise: state.currentExercise ?? exercise,
-                        isCurrent: true,
-                      ),
-                      const SizedBox(height: 20),
-                      if (nextExercise != null)
-                        CurrentExerciseTile(
-                          exercise: nextExercise,
-                        ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
               if (exercise.type == WorkoutType.reps && state.restType == null && !isFinished)
