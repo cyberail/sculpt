@@ -53,7 +53,6 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
 
   Future<void> playSound({required String asset}) async {
     final player = AudioPlayer();
-    final duration = await player.setAsset(asset);
     await player.play();
     player.dispose();
   }
@@ -71,6 +70,26 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
       return true;
     }
     return false;
+  }
+
+  Future<void> restartSet(int? tried, {bool restartExercise = false}) async {
+    state.timer?.cancel();
+    final currentExercise = state.currentExercise;
+    final currentRoutine = state.routine;
+    if (currentExercise == null || currentRoutine == null) {
+      return;
+    }
+    final currentExerciseClone = Exercise.clone(currentExercise);
+
+    if (tried != null) {
+      currentExerciseClone.tried = restartExercise == true ? 0 : tried - 1;
+    }
+
+    start(
+      currentRoutine,
+      currentExercise: currentExerciseClone,
+      newIndex: state.currentExerciseIndex,
+    );
   }
 
   void _speak(String text) async {

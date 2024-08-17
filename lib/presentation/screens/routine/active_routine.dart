@@ -10,10 +10,12 @@ import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/screens/routine/widgets/countdown.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/loading_sto_btn.dart';
+import 'package:sculpt/presentation/ui_kit/buttons/resizable_floating_button.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/current_exercise_tile.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/exercise_tile.dart';
 import 'package:sculpt/presentation/ui_kit/utils/utils.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class ActiveRoutine extends StatefulWidget {
   final Routine routine;
@@ -32,9 +34,12 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
   late RoutineControlCubit cubit;
   late Timer timer;
   bool isFinished = false;
+  bool isLocked = false;
 
   @override
   void initState() {
+    WakelockPlus.enable();
+
     cubit = context.read<RoutineControlCubit>();
     cubit.start(widget.routine, newIndex: widget.index);
 
@@ -44,6 +49,8 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
   @override
   void dispose() {
     cubit.stop();
+    // The next line disables the wakelock again.
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -80,12 +87,16 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
 
         return Scaffold(
           backgroundColor: UIKitColors.primaryColor,
-          appBar: defaultAppBar(
-            context,
-            "${widget.routine.name} in progress",
-            onTap: () => Utils.showAlertDialog(context, "Are you sure you want to stop the routine ?"),
-            icon: Icons.close,
-          ),
+          appBar: defaultAppBar(context, "${widget.routine.name} in progress",
+              onTap: () => Utils.showAlertDialog(context, "Are you sure you want to stop the routine ?"),
+              icon: Icons.close,
+              rightSideWidget: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isLocked = !isLocked;
+                    });
+                  },
+                  icon: Icon(isLocked ? Icons.lock_rounded : Icons.lock_open_rounded))),
           body: Stack(
             children: [
               SingleChildScrollView(
@@ -103,7 +114,7 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
                         ),
                       ),
                       CurrentExerciseTile(
-                        exercise: exercise,
+                        exercise: state.currentExercise ?? exercise,
                         isCurrent: true,
                       ),
                       const SizedBox(height: 20),
@@ -121,32 +132,78 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: LoadingStopButton(
-                      onTap: () {
-                        RestType restType = RestType.between;
-                        if (state.currentExercise != null && state.currentExercise!.tried >= exercise.sets!) {
-                          restType = RestType.after;
-                        }
-                        if (state.currentExerciseIndex! <= widget.routine.exercises.length - 1 &&
-                            state.currentExercise!.tried <= exercise.sets!) {
-                          context.read<RoutineControlCubit>().start(
-                                widget.routine,
-                                newIndex: state.currentExerciseIndex,
-                                restType: restType,
-                                currentExercise: state.currentExercise ?? exercise,
-                              );
-                        } else {
-                          setState(() {
-                            isFinished = true;
-                          });
-                        }
-                      },
+                      onDoubleTap: isLocked ? () => _stop(context, state, exercise) : null,
+                      onTap: !isLocked ? () => _stop(context, state, exercise) : () {},
                     ),
                   ),
                 ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: ResizableFloatingButton(
+                    iconSize: 20,
+                    icon: Icons.restart_alt,
+                    color: UIKitColors.green,
+                    onDoubleTap: isLocked ? () => _restartSet(context, state) : null,
+                    onTap: !isLocked ? () => _restartSet(context, state) : () {},
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: ResizableFloatingButton(
+                    iconSize: 20,
+                    icon: Icons.replay_outlined,
+                    color: UIKitColors.green,
+                    onDoubleTap: isLocked ? () => _restartExercise(context, state) : null,
+                    onTap: !isLocked ? () => _restartExercise(context, state) : () {},
+                  ),
+                ),
+              ),
             ],
           ),
         );
       },
     );
+  }
+
+  _stop(BuildContext context, RoutineControlState state, Exercise exercise) {
+    cubit.playFinishSound();
+    RestType restType = RestType.between;
+    if (state.currentExercise != null && state.currentExercise!.tried >= exercise.sets!) {
+      restType = RestType.after;
+    }
+
+    if (state.currentExerciseIndex! == widget.routine.exercises.length - 1 &&
+        state.currentExercise!.tried == exercise.sets!) {
+      setState(() {
+        isFinished = true;
+      });
+      return;
+    }
+
+    if (state.currentExerciseIndex! <= widget.routine.exercises.length - 1 &&
+        state.currentExercise!.tried <= exercise.sets!) {
+      context.read<RoutineControlCubit>().start(
+            widget.routine,
+            newIndex: state.currentExerciseIndex,
+            restType: restType,
+            currentExercise: state.currentExercise ?? exercise,
+          );
+    }
+  }
+
+  _restartSet(BuildContext context, RoutineControlState state) {
+    context.read<RoutineControlCubit>().restartSet(state.currentExercise?.tried);
+  }
+
+  _restartExercise(BuildContext context, RoutineControlState state) {
+    context.read<RoutineControlCubit>().restartSet(
+          state.currentExercise?.tried,
+          restartExercise: true,
+        );
   }
 }

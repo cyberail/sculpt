@@ -5,15 +5,18 @@ import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class LoadingStopButton extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onDoubleTap;
   const LoadingStopButton({
     Key? key,
     required this.onTap,
+    this.onDoubleTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      onDoubleTap: onDoubleTap,
       child: Container(
         width: 80,
         height: 80,

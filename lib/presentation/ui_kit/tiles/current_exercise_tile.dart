@@ -39,7 +39,11 @@ class CurrentExerciseTile extends StatelessWidget {
                 style: TextStyle(color: UIKitColors.white, fontSize: 18),
               ),
               Text(
-                exercise.sets.toString(),
+                "${exercise.tried}",
+                style: TextStyle(color: UIKitColors.secondaryFgColor, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "/${exercise.sets}",
                 style: TextStyle(color: UIKitColors.white, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/list_routine/list_routine_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
@@ -18,6 +19,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return FutureBuilder(
         future: setUpDatabase(),
         builder: (context, snapshot) {

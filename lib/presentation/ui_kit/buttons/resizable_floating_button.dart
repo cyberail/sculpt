@@ -3,6 +3,8 @@ import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class ResizableFloatingButton extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onDoubleTap;
+
   final Color color;
   final IconData icon;
   final double? iconSize;
@@ -12,12 +14,14 @@ class ResizableFloatingButton extends StatelessWidget {
     this.color = UIKitColors.secondaryFgColor,
     this.icon = Icons.add,
     this.iconSize,
+    this.onDoubleTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      onDoubleTap: onDoubleTap,
       child: Container(
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(60)),
