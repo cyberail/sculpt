@@ -11,14 +11,17 @@ import 'package:sculpt/presentation/screens/routine/widgets/countdown.dart';
 import 'package:sculpt/presentation/ui_kit/app_bar/default_appbar.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/loading_sto_btn.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
+import 'package:sculpt/presentation/ui_kit/tiles/current_exercise_tile.dart';
 import 'package:sculpt/presentation/ui_kit/tiles/exercise_tile.dart';
 import 'package:sculpt/presentation/ui_kit/utils/utils.dart';
 
 class ActiveRoutine extends StatefulWidget {
   final Routine routine;
+  final int? index;
   const ActiveRoutine({
     super.key,
     required this.routine,
+    this.index,
   });
 
   @override
@@ -33,7 +36,7 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
   @override
   void initState() {
     cubit = context.read<RoutineControlCubit>();
-    cubit.start(widget.routine);
+    cubit.start(widget.routine, newIndex: widget.index);
 
     super.initState();
   }
@@ -81,6 +84,7 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
             context,
             "${widget.routine.name} in progress",
             onTap: () => Utils.showAlertDialog(context, "Are you sure you want to stop the routine ?"),
+            icon: Icons.close,
           ),
           body: Stack(
             children: [
@@ -98,16 +102,14 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
                           restType: state.restType,
                         ),
                       ),
-                      ExerciseTile(
-                        backgroundColor: UIKitColors.green,
+                      CurrentExerciseTile(
                         exercise: exercise,
-                        routine: widget.routine,
+                        isCurrent: true,
                       ),
                       const SizedBox(height: 20),
                       if (nextExercise != null)
-                        ExerciseTile(
+                        CurrentExerciseTile(
                           exercise: nextExercise,
-                          routine: widget.routine,
                         ),
                     ],
                   ),

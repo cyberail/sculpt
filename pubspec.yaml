@@ -19,6 +19,8 @@ dependencies:
   field_suggestion: ^0.2.5
   sleek_circular_slider: ^2.0.1
   just_audio: ^0.9.37
+  flutter_local_notifications: ^17.2.2
+  flutter_tts: ^4.0.2
 
 dev_dependencies:
   flutter_test:

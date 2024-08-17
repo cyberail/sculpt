@@ -18,7 +18,7 @@ class ExerciseProgress {
   });
 
   double get currentPercentage {
-    if (exercise.type == WorkoutType.time || exercise.type == WorkoutType.timeReps) {
+    if (exercise.type == WorkoutType.timeReps) {
       return timePercentage();
     } else {
       if (restType == RestType.after) {

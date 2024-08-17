@@ -73,6 +73,7 @@ class RoutineDetailScreen extends StatelessWidget {
                           isScrollControlled: true,
                           useSafeArea: true,
                           isDismissible: false,
+                          enableDrag: false,
                           builder: (_) {
                             return ActiveRoutine(routine: routine);
                           });
@@ -103,29 +104,30 @@ class RoutineDetailScreen extends StatelessWidget {
         subtitle: "Add by tapping the add button.",
       );
     }
-    return ListView(
+    return ListView.builder(
       physics: const BouncingScrollPhysics(),
-      children: [
-        ...routine.exercises.map((exercise) {
-          final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
-          return BlocProvider.value(
-            value: cubit,
-            child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                ),
-                child: ExerciseTile(
-                  exercise: exercise,
-                  routine: routine,
-                  // progress: ExerciseProgress(
-                  //   exercise: exercise,
-                  //   currentSeconds: 77,
-                  // ),
-                )),
-          );
-        }),
-        const SizedBox(height: 120),
-      ],
+      itemCount: routine.exercises.length,
+      padding: const EdgeInsets.only(bottom: 120),
+      itemBuilder: (context, index) {
+        final exercise = routine.exercises[index];
+        final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
+        return BlocProvider.value(
+          value: cubit,
+          child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+              ),
+              child: ExerciseTile(
+                exercise: exercise,
+                routine: routine,
+                index: index,
+                // progress: ExerciseProgress(
+                //   exercise: exercise,
+                //   currentSeconds: 77,
+                // ),
+              )),
+        );
+      },
     );
   }
 }

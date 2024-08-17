@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
+import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/models/progress.dart';
+import 'package:sculpt/presentation/screens/routine/active_routine.dart';
 import 'package:sculpt/presentation/screens/routine/exercise/exercise_detail.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/icon_button/remove_button.dart';
 import 'package:sculpt/presentation/ui_kit/buttons/icon_button/start_button.dart';
@@ -16,12 +18,14 @@ class ExerciseTile extends StatelessWidget {
   final Routine routine;
   final ExerciseProgress? progress;
   final Color? backgroundColor;
+  final int? index;
   const ExerciseTile({
     super.key,
     required this.exercise,
     this.progress,
     required this.routine,
     this.backgroundColor,
+    this.index,
   });
 
   @override
@@ -112,7 +116,19 @@ class ExerciseTile extends StatelessWidget {
                 const SizedBox(height: 25),
                 Row(
                   children: [
-                    UIKitStartButton(onTap: () {}),
+                    UIKitStartButton(onTap: () {
+                      final newIndex = index;
+
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          enableDrag: false,
+                          isDismissible: false,
+                          builder: (_) {
+                            return ActiveRoutine(routine: routine, index: newIndex);
+                          });
+                    }),
                     const SizedBox(width: 4),
                     const Text(
                       "Start",
@@ -161,16 +177,7 @@ class ExerciseTile extends StatelessWidget {
   }
 
   Widget loadRepetitionInfo(BuildContext context) {
-    if (exercise.type == WorkoutType.time) {
-      return Row(
-        children: [
-          Text(
-            "${exercise.time}m",
-            style: const TextStyle(color: UIKitColors.white, fontSize: 16),
-          )
-        ],
-      );
-    } else if (exercise.type == WorkoutType.timeReps) {
+    if (exercise.type == WorkoutType.timeReps) {
       return Column(
         children: [
           Text(

@@ -13,38 +13,48 @@ const ExerciseSchema = Schema(
   name: r'Exercise',
   id: 2972066467915231902,
   properties: {
-    r'name': PropertySchema(
+    r'isRepSets': PropertySchema(
       id: 0,
+      name: r'isRepSets',
+      type: IsarType.bool,
+    ),
+    r'isTimedReps': PropertySchema(
+      id: 1,
+      name: r'isTimedReps',
+      type: IsarType.bool,
+    ),
+    r'name': PropertySchema(
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'reps': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'reps',
       type: IsarType.long,
     ),
     r'reps_rest_min': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'reps_rest_min',
       type: IsarType.double,
     ),
     r'rest_after_min': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'rest_after_min',
       type: IsarType.double,
     ),
     r'sets': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'sets',
       type: IsarType.long,
     ),
     r'time': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'time',
       type: IsarType.double,
     ),
     r'type': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'type',
       type: IsarType.string,
       enumMap: _ExercisetypeEnumValueMap,
@@ -73,13 +83,15 @@ void _exerciseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
-  writer.writeLong(offsets[1], object.reps);
-  writer.writeDouble(offsets[2], object.repsRestMin);
-  writer.writeDouble(offsets[3], object.restAfterMin);
-  writer.writeLong(offsets[4], object.sets);
-  writer.writeDouble(offsets[5], object.time);
-  writer.writeString(offsets[6], object.type.name);
+  writer.writeBool(offsets[0], object.isRepSets);
+  writer.writeBool(offsets[1], object.isTimedReps);
+  writer.writeString(offsets[2], object.name);
+  writer.writeLong(offsets[3], object.reps);
+  writer.writeDouble(offsets[4], object.repsRestMin);
+  writer.writeDouble(offsets[5], object.restAfterMin);
+  writer.writeLong(offsets[6], object.sets);
+  writer.writeDouble(offsets[7], object.time);
+  writer.writeString(offsets[8], object.type.name);
 }
 
 Exercise _exerciseDeserialize(
@@ -89,13 +101,13 @@ Exercise _exerciseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Exercise(
-    name: reader.readStringOrNull(offsets[0]) ?? '',
-    reps: reader.readLongOrNull(offsets[1]),
-    repsRestMin: reader.readDoubleOrNull(offsets[2]),
-    restAfterMin: reader.readDoubleOrNull(offsets[3]),
-    sets: reader.readLongOrNull(offsets[4]),
-    time: reader.readDoubleOrNull(offsets[5]) ?? -1,
-    type: _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[6])] ??
+    name: reader.readStringOrNull(offsets[2]) ?? '',
+    reps: reader.readLongOrNull(offsets[3]),
+    repsRestMin: reader.readDoubleOrNull(offsets[4]),
+    restAfterMin: reader.readDoubleOrNull(offsets[5]),
+    sets: reader.readLongOrNull(offsets[6]),
+    time: reader.readDoubleOrNull(offsets[7]) ?? -1,
+    type: _ExercisetypeValueEnumMap[reader.readStringOrNull(offsets[8])] ??
         WorkoutType.none,
   );
   return object;
@@ -109,18 +121,22 @@ P _exerciseDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 3:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 4:
       return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 5:
-      return (reader.readDoubleOrNull(offset) ?? -1) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 6:
+      return (reader.readLongOrNull(offset)) as P;
+    case 7:
+      return (reader.readDoubleOrNull(offset) ?? -1) as P;
+    case 8:
       return (_ExercisetypeValueEnumMap[reader.readStringOrNull(offset)] ??
           WorkoutType.none) as P;
     default:
@@ -130,19 +146,37 @@ P _exerciseDeserializeProp<P>(
 
 const _ExercisetypeEnumValueMap = {
   r'reps': r'reps',
-  r'time': r'time',
   r'timeReps': r'timeReps',
   r'none': r'none',
 };
 const _ExercisetypeValueEnumMap = {
   r'reps': WorkoutType.reps,
-  r'time': WorkoutType.time,
   r'timeReps': WorkoutType.timeReps,
   r'none': WorkoutType.none,
 };
 
 extension ExerciseQueryFilter
     on QueryBuilder<Exercise, Exercise, QFilterCondition> {
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> isRepSetsEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isRepSets',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Exercise, Exercise, QAfterFilterCondition> isTimedRepsEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isTimedReps',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Exercise, Exercise, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,

@@ -1,13 +1,13 @@
 enum WorkoutType {
   reps("Sets and reps"),
-  time('Time based'),
   timeReps('Timed sets'),
-
   none('none');
 
   const WorkoutType(this.val);
 
   final String val;
+
+  static List<WorkoutType> get validValues => [reps, timeReps];
 }
 
 enum RestType {

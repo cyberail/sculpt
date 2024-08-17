@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/datasource/routine.dart';
@@ -72,6 +73,18 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
     return false;
   }
 
+  void _speak(String text) async {
+    final flutterTts = FlutterTts();
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.setSpeechRate(0.35);
+    await flutterTts.getDefaultEngine;
+    await flutterTts.setVoice({"name": "en-us-x-tpf-local", "locale": "en-AU"});
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1);
+    await flutterTts.speak(text);
+  }
+
   void start(
     Routine routine, {
     int? newIndex,
@@ -97,10 +110,15 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
     if (state.timer != null) {
       state.timer?.cancel();
     }
-    final timer = Timer.periodic(
-        const Duration(
-          seconds: 1,
-        ), (timer) {
+
+    final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (restType == RestType.after && timer.tick == 2) {
+        if (exerciseExists(routine, currentExerciseIndex + 1)) {
+          final nextExercise = routine.exercises[currentExerciseIndex + 1];
+          _speak(
+              "Next exercise: ${nextExercise.name}. \n ${nextExercise.sets} Sets. ${nextExercise.isRepSets ? nextExercise.reps : (nextExercise.time * 60).round()} ${nextExercise.isRepSets ? 'Reps ' : 'Seconds'} each set.");
+        }
+      }
       emit(state.copyWith(
         event: RoutineEvent.tick,
         secondsPassed: timer.tick,
@@ -132,54 +150,14 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
           timer.cancel();
           return;
         }
-        if (exercise.type == WorkoutType.timeReps || exercise.type == WorkoutType.reps) {
-          print("=== timereps ${exercise.tried}");
 
-          if (restType == null) {
-            exercise.tried += 1;
-          }
+        print("=== timereps ${exercise.tried}");
 
-          if (exercise.tried >= exercise.sets!) {
-            emit(state.copyWith(
-              secondsPassed: 0,
-              timer: null,
-            ));
-            if (isLastExercise(routine)) {
-              emit(state.copyWith(event: RoutineEvent.fullyFinished));
-              timer.cancel();
-              return;
-            }
+        if (restType == null) {
+          exercise.tried += 1;
+        }
 
-            start(
-              routine,
-              newIndex: currentExerciseIndex,
-              currentExercise: exercise,
-              restType: RestType.after,
-            );
-
-            timer.cancel();
-            return;
-          }
-
-          emit(state.copyWith(
-            secondsPassed: 0,
-            timer: null,
-          ));
-          if (restType != null) {
-            start(
-              routine,
-              newIndex: currentExerciseIndex,
-              currentExercise: exercise,
-            );
-          } else {
-            start(
-              routine,
-              newIndex: currentExerciseIndex,
-              currentExercise: exercise,
-              restType: RestType.between,
-            );
-          }
-        } else if (exercise.type == WorkoutType.time) {
+        if (exercise.tried >= exercise.sets!) {
           emit(state.copyWith(
             secondsPassed: 0,
             timer: null,
@@ -196,7 +174,30 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
             currentExercise: exercise,
             restType: RestType.after,
           );
+
+          timer.cancel();
+          return;
         }
+
+        emit(state.copyWith(
+          secondsPassed: 0,
+          timer: null,
+        ));
+        if (restType != null) {
+          start(
+            routine,
+            newIndex: currentExerciseIndex,
+            currentExercise: exercise,
+          );
+        } else {
+          start(
+            routine,
+            newIndex: currentExerciseIndex,
+            currentExercise: exercise,
+            restType: RestType.between,
+          );
+        }
+
         timer.cancel();
       }
     });

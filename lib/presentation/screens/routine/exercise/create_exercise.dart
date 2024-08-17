@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/create_exercise/exercise_cubit.dart';
 import 'package:sculpt/bloc/routine/routine_cubit.dart';
@@ -42,6 +41,7 @@ class _CreateExerciseState extends State<CreateExercise> {
     exercise = widget.exercise;
     routine = widget.routine;
     selectedWorkoutType = exercise?.type;
+    setsController.addListener(() => setState(() {}));
     super.initState();
   }
 
@@ -84,7 +84,7 @@ class _CreateExerciseState extends State<CreateExercise> {
             child: Form(
                 key: _fromKey,
                 child: Container(
-                  margin: EdgeInsets.only(top: 30),
+                  margin: const EdgeInsets.only(top: 30),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,20 +103,20 @@ class _CreateExerciseState extends State<CreateExercise> {
                           "Type: timed or sets",
                           style: TextStyle(color: UIKitColors.grey, fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        style: TextStyle(color: UIKitColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: UIKitColors.white, fontSize: 20, fontWeight: FontWeight.bold),
                         dropdownColor: UIKitColors.black,
                         isExpanded: true,
-                        items: WorkoutType.values
+                        items: WorkoutType.validValues
                             .map((e) => DropdownMenuItem(
                                   value: e,
+                                  enabled: true,
                                   child: Text(
                                     e.val,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: UIKitColors.white,
                                       fontSize: 20,
                                     ),
                                   ),
-                                  enabled: true,
                                 ))
                             .toList(),
                         onChanged: (value) {
@@ -127,9 +127,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                       ),
                       const SizedBox(height: 20),
                       ...loadRepetitionField(context),
-                      const SizedBox(height: 20),
                       getRestBetween(context),
-                      const SizedBox(height: 20),
                       getRestAfter(context),
                       const SizedBox(height: 40),
                       LargeBtn(
@@ -147,26 +145,33 @@ class _CreateExerciseState extends State<CreateExercise> {
   }
 
   Widget getRestBetween(BuildContext context) {
-    if (selectedWorkoutType != WorkoutType.reps && selectedWorkoutType != WorkoutType.timeReps) {
+    final sets = int.tryParse(setsController.text);
+    if (sets == null || sets <= 1) {
       return const SizedBox.shrink();
     }
 
-    return DefaultTextField(
-      controller: restBetweenController,
-      inputType: TextInputType.number,
-      label: "Resting minutes between reps",
-      hintText: "e.g. 1",
-      validator: (value) => Validators.emptyTextValidation(context, value),
+    return Container(
+      padding: const EdgeInsets.only(top: 20),
+      child: DefaultTextField(
+        controller: restBetweenController,
+        inputType: TextInputType.number,
+        label: "Resting minutes between reps",
+        hintText: "e.g. 1",
+        validator: (value) => Validators.emptyTextValidation(context, value),
+      ),
     );
   }
 
   Widget getRestAfter(BuildContext context) {
-    return DefaultTextField(
-      controller: restAfterController,
-      inputType: TextInputType.number,
-      label: "Duration in minutes after exercise",
-      hintText: "e.g. 2",
-      validator: (value) => Validators.emptyTextValidation(context, value),
+    return Container(
+      padding: const EdgeInsets.only(top: 20),
+      child: DefaultTextField(
+        controller: restAfterController,
+        inputType: TextInputType.number,
+        label: "Duration in minutes after exercise",
+        hintText: "e.g. 2",
+        validator: (value) => Validators.emptyTextValidation(context, value),
+      ),
     );
   }
 
@@ -189,16 +194,6 @@ class _CreateExerciseState extends State<CreateExercise> {
           validator: (value) => Validators.emptyTextValidation(context, value),
         )
       ];
-    } else if (selectedWorkoutType == WorkoutType.time) {
-      return [
-        DefaultTextField(
-          controller: timeController,
-          inputType: TextInputType.number,
-          label: "Duration in minutes",
-          hintText: "e.g 2",
-          validator: (value) => Validators.emptyTextValidation(context, value),
-        )
-      ];
     } else if (selectedWorkoutType == WorkoutType.timeReps) {
       return [
         DefaultTextField(
@@ -208,6 +203,7 @@ class _CreateExerciseState extends State<CreateExercise> {
           hintText: "e.g. 3",
           validator: (value) => Validators.emptyTextValidation(context, value),
         ),
+        const SizedBox(height: 20),
         DefaultTextField(
           controller: timeController,
           inputType: TextInputType.number,
@@ -234,7 +230,7 @@ class _CreateExerciseState extends State<CreateExercise> {
             routine,
             exercise!,
             name: nameController.text,
-            type: selectedWorkoutType ?? WorkoutType.time,
+            type: selectedWorkoutType ?? WorkoutType.timeReps,
             time: double.tryParse(timeController.text),
             sets: int.tryParse(setsController.text),
             reps: int.tryParse(repsController.text),
@@ -243,7 +239,7 @@ class _CreateExerciseState extends State<CreateExercise> {
       context.read<ExerciseCubit>().create(
             routine,
             name: nameController.text,
-            type: selectedWorkoutType ?? WorkoutType.time,
+            type: selectedWorkoutType ?? WorkoutType.timeReps,
             time: double.tryParse(timeController.text),
             sets: int.tryParse(setsController.text),
             reps: int.tryParse(repsController.text),

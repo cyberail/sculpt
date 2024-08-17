@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
-AppBar defaultAppBar(BuildContext context, String title, {bool enableBackButton = true, VoidCallback? onTap}) => AppBar(
+AppBar defaultAppBar(BuildContext context, String title,
+        {bool enableBackButton = true, IconData? icon, VoidCallback? onTap}) =>
+    AppBar(
       leading: enableBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(icon ?? Icons.arrow_back),
               onPressed: onTap ?? context.pop,
               color: UIKitColors.white,
             )

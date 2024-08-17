@@ -13,7 +13,7 @@ class Exercise {
 
   @Name('type')
   @Enumerated(EnumType.name)
-  WorkoutType type = WorkoutType.time;
+  WorkoutType type = WorkoutType.timeReps;
 
   @Name('time')
   double time = -1;
@@ -43,6 +43,9 @@ class Exercise {
     this.repsRestMin,
     this.tried = 0,
   });
+
+  bool get isTimedReps => type == WorkoutType.timeReps;
+  bool get isRepSets => type == WorkoutType.reps;
 
   factory Exercise.clone(Exercise ex) {
     return Exercise(
