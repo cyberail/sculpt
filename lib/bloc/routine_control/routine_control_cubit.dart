@@ -16,6 +16,7 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
         super(RoutineControlState());
 
   late final RoutineDatasource _datasource;
+  final player = AudioPlayer();
 
   bool hasEnded(Routine routine, RestType? restType) {
     if (state.currentExerciseIndex != null) {
@@ -52,9 +53,8 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
   }
 
   Future<void> playSound({required String asset}) async {
-    final player = AudioPlayer();
+    player.setAsset(asset);
     await player.play();
-    player.dispose();
   }
 
   Future<void> playGetReadySound() async => playSound(asset: "assets/are_you_ready.wav");
