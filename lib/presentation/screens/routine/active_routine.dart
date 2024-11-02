@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sculpt/bloc/routine_control/routine_control_cubit.dart';
 import 'package:sculpt/constants/enums.dart';
+import 'package:sculpt/infrastructure/event_manager/bus.dart';
+import 'package:sculpt/infrastructure/event_manager/evnets.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/screens/routine/widgets/countdown.dart';
@@ -37,6 +39,9 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
 
   @override
   void initState() {
+    Buss().eventBus.on().listen((event) {
+      print("eventBus");
+    });
     WakelockPlus.enable();
 
     cubit = context.read<RoutineControlCubit>();
@@ -78,6 +83,12 @@ class _ActiveRoutineState extends State<ActiveRoutine> with TickerProviderStateM
         }
       },
       builder: (context, state) {
+        // Buss.eventBus?.on().listen((event) {
+        //   print("eventBus");
+        // });
+        // Buss.eventBus?.on<StopEvent>().listen((event) {
+        //   _stop(context, state, widget.routine.exercises[state.currentExerciseIndex!]);
+        // });
         final exercise = widget.routine.exercises[state.currentExerciseIndex!];
         final nextExercise = getNextExercise(state.currentExerciseIndex);
         if (state.event == RoutineEvent.exerciseFinished) {

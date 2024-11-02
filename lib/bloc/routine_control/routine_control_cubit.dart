@@ -7,6 +7,9 @@ import 'package:sculpt/constants/enums.dart';
 import 'package:sculpt/infrastructure/datasource/routine.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/exercise.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
+import 'package:sculpt/infrastructure/services/notification_service.dart';
+import 'package:sculpt/models/notification_data.dart';
+import 'package:sculpt/models/notification_progress.dart';
 
 part 'routine_control_state.dart.dart';
 
@@ -15,6 +18,7 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
       : _datasource = datasource,
         super(RoutineControlState());
 
+  final NotificationService notificationService = NotificationService();
   late final RoutineDatasource _datasource;
   final player = AudioPlayer();
 
@@ -45,9 +49,9 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
     return false;
   }
 
-  int? findNextExercise(Routine routine, int index) {
+  Exercise? findNextExercise(Routine routine, int index) {
     if (exerciseExists(routine, index)) {
-      return index;
+      return routine.exercises[index];
     }
     return null;
   }
@@ -116,6 +120,16 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
       return;
     }
     final exercise = currentExercise ?? Exercise.clone(routine.exercises[currentExerciseIndex]);
+    NotificationData notificationData = NotificationData(
+      workout: exercise,
+      restType: restType,
+      nextWorkout: findNextExercise(routine, currentExerciseIndex + 1),
+    );
+    if (exercise.type == WorkoutType.timeReps) {
+      final progress = NotificationProgress((exercise.repsRestMin! * 60).toInt(), 0);
+      notificationData = notificationData.copyWith(progress: progress);
+    }
+    notificationService.showNotification(notificationData);
     if (exercise.type == WorkoutType.reps && restType == null) {
       exercise.tried += 1;
       emit(state.copyWith(
@@ -125,12 +139,15 @@ class RoutineControlCubit extends Cubit<RoutineControlState> {
       ));
       return;
     }
+
     emit(state.copyWith(routine: routine));
     if (state.timer != null) {
       state.timer?.cancel();
     }
 
     final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      notificationData = notificationData.updateProgress();
+      notificationService.showNotification(notificationData);
       if (restType == RestType.after && timer.tick == 2) {
         if (exerciseExists(routine, currentExerciseIndex + 1)) {
           final nextExercise = routine.exercises[currentExerciseIndex + 1];

@@ -12,3 +12,11 @@ abstract class UIKitColors {
   static const Color green = Color(0xff017857);
   static const Color greenGlow = Color(0xFF668E83);
 }
+
+extension HtmlHexCode on Color {
+  String get htmlHex {
+    final str = value.toRadixString(16).substring(2);
+
+    return "#$str";
+  }
+}

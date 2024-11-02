@@ -21,3 +21,9 @@ enum StateStatus {
   success,
   failure,
 }
+
+enum NotificationType {
+  progress;
+}
+
+enum NotificationAction { stop }
