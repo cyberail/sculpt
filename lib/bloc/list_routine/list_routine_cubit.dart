@@ -23,6 +23,12 @@ class ListRoutineCubit extends Cubit<ListRoutineState> {
     }
   }
 
+  Future<void> removeRoutine(Routine routine) async {
+    _datasource.remove(routine);
+    final routines = _datasource.getAllRoutines();
+    emit(state.copyWith(status: StateStatus.success, routines: routines));
+  }
+
   Future<void> getById(Routine routine) async {
     try {
       final fetchedRoutine = _datasource.getById(routine);

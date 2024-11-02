@@ -28,6 +28,8 @@ class RoutineDatasource extends BaseDatasource {
     return db.deleteExercise(routine, exercise);
   }
 
+  bool remove(Routine routine) => db.deleteRoutine(routine);
+
   // Future<void> create() {
 
   // }

@@ -30,18 +30,18 @@ class _RoutineListScreenState extends State<RoutineListScreen> {
     final cubit = ExerciseCubit(ExerciseDatasource(db: sl.get<IsarDatabase>()));
     return BlocProvider(
       create: (context) => cubit,
-      child: BlocBuilder<ListRoutineCubit, ListRoutineState>(
-        builder: (context, state) {
-          if (state.routines == null || state.routines!.isEmpty) {
-            return const EmptyListMessage(title: "No routines avvailable");
-          }
-          return Scaffold(
-            backgroundColor: UIKitColors.primaryColor,
-            appBar: defaultAppBar(context, "Routines list"),
-            body: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: ListView(
+      child: Scaffold(
+        backgroundColor: UIKitColors.primaryColor,
+        appBar: defaultAppBar(context, "Routines list"),
+        body: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: BlocBuilder<ListRoutineCubit, ListRoutineState>(
+              builder: (context, state) {
+                if (state.routines == null || state.routines!.isEmpty) {
+                  return const EmptyListMessage(title: "No routines avvailable");
+                }
+                return ListView(
                   physics: const BouncingScrollPhysics(),
                   children: [
                     ...state.routines!.map((e) => Padding(
@@ -50,11 +50,11 @@ class _RoutineListScreenState extends State<RoutineListScreen> {
                         ),
                         child: RoutineTile(routine: e))),
                   ],
-                ),
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

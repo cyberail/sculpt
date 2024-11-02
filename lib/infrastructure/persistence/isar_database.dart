@@ -61,4 +61,13 @@ class IsarDatabase {
 
     return routines;
   }
+
+  bool deleteRoutine(Routine routine) {
+    bool result = false;
+    db.writeTxnSync(() {
+      result = db.routines.deleteSync(routine.id);
+    });
+
+    return result;
+  }
 }

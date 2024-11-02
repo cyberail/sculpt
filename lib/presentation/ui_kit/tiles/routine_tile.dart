@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sculpt/bloc/list_routine/list_routine_cubit.dart';
+import 'package:sculpt/bloc/routine/routine_cubit.dart';
 import 'package:sculpt/infrastructure/persistence/schemes/routine.dart';
 import 'package:sculpt/presentation/screens/routine/routine_detail.dart';
+import 'package:sculpt/presentation/ui_kit/buttons/icon_button/remove_button.dart';
 import 'package:sculpt/presentation/ui_kit/colors/colors.dart';
 
 class RoutineTile extends StatelessWidget {
@@ -31,6 +35,11 @@ class RoutineTile extends StatelessWidget {
                 style: const TextStyle(color: UIKitColors.white, fontSize: 16),
               ),
               const Spacer(),
+              UIKitRemoveButton(
+                onTap: () {
+                  context.read<ListRoutineCubit>().removeRoutine(routine);
+                },
+              ),
             ],
           ),
           const SizedBox(height: 25),
